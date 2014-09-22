@@ -2,15 +2,30 @@ package com.example.jeff.musicplayer;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.EditText;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    EditText songName;
+    EditText artistName;
+    HttpClient httpclient = new DefaultHttpClient();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +79,33 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onClick(View view)
         {
-          Toast.makeText(getApplicationContext(), "Lyrics Button Clicked", Toast.LENGTH_SHORT).show();
+            Log.d(MainActivity.class.getSimpleName(), "TEST LOG");
+            songName = (EditText)findViewById(R.id.songTextbox);
+            artistName = (EditText)findViewById(R.id.artistTextbox);
+            String URL = "http://lyricfind.com/api_service/lyric.do?apikey=2233d1d669999ce64ee0eb073d6da191&reqtype=default&trackid=elid:3d294a4831babc7d57169ecda7117a16";
+            try
+            {
+                HttpResponse response = httpclient.execute(new HttpGet(URL));
+                StatusLine statusLine = response.getStatusLine();
+                if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    String responseString = out.toString();
+                    out.close();
+                    Toast.makeText(getApplicationContext(), responseString.toString(), Toast.LENGTH_SHORT).show();
+                    Log.d(MainActivity.class.getSimpleName(), responseString);
+                } else{
+                    //Closes the connection.
+                    response.getEntity().getContent().close();
+                    throw new IOException(statusLine.getReasonPhrase());
+                }
+
+            }
+            catch(Exception e)
+            {
+
+            }
+            Toast.makeText(getApplicationContext(), songName.getText(), Toast.LENGTH_SHORT).show();
         }
       });
 
@@ -74,7 +115,8 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onClick(View view)
         {
-          Toast.makeText(getApplicationContext(), "Choose Song Button Clicked", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "song button pressed", Toast.LENGTH_SHORT).show();
+
         }
       });
     }

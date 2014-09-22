@@ -6,7 +6,8 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context="com.example.andy.testui.testActivity">
+                tools:context="com.example.andy.testui.testActivity"
+    android:id="@+id/layout">
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -60,9 +61,10 @@
         android:layout_height="wrap_content"
         android:text="Lyrics"
         android:id="@+id/lyricsButton"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="35dp"
         android:layout_below="@+id/stopButton"
-        android:layout_centerHorizontal="true" />
+        android:layout_toRightOf="@+id/nextButton"
+        android:layout_toEndOf="@+id/nextButton" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -70,7 +72,49 @@
         android:layout_height="wrap_content"
         android:text="Choose Song"
         android:id="@+id/chooseSongButton"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/lyricsButton"
+        android:layout_toRightOf="@+id/nextButton" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/artistTextbox"
+        android:layout_toStartOf="@+id/prevButton"
+        android:layout_alignBottom="@+id/lyricsButton"
+        android:layout_alignRight="@+id/stopButton"
+        android:layout_alignEnd="@+id/stopButton"
+        android:layout_alignLeft="@+id/prevButton"
+        android:layout_alignStart="@+id/prevButton"
+        android:inputType="text" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/songTextbox"
+        android:layout_alignBottom="@+id/chooseSongButton"
+        android:layout_toLeftOf="@+id/nextButton"
+        android:layout_toStartOf="@+id/nextButton"
+        android:layout_alignLeft="@+id/artistTextbox"
+        android:layout_alignStart="@+id/artistTextbox" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Artist"
+        android:id="@+id/artistText"
+        android:layout_toStartOf="@+id/artistTextbox"
+        android:layout_alignBottom="@+id/artistTextbox"
+        android:layout_toLeftOf="@+id/artistTextbox" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Song"
+        android:id="@+id/songLabel"
+        android:layout_toStartOf="@+id/analogClock"
+        android:layout_alignBottom="@+id/songTextbox"
+        android:layout_toLeftOf="@+id/analogClock" />
 
 </RelativeLayout>
