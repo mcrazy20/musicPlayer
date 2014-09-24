@@ -13,6 +13,7 @@ import android.widget.EditText;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -25,7 +26,7 @@ public class MainActivity extends ActionBarActivity {
 
     EditText songName;
     EditText artistName;
-    HttpClient httpclient = new DefaultHttpClient();
+    //HttpClient httpclient = new DefaultHttpClient();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,30 +83,32 @@ public class MainActivity extends ActionBarActivity {
             Log.d(MainActivity.class.getSimpleName(), "TEST LOG");
             songName = (EditText)findViewById(R.id.songTextbox);
             artistName = (EditText)findViewById(R.id.artistTextbox);
-            String URL = "http://lyricfind.com/api_service/lyric.do?apikey=2233d1d669999ce64ee0eb073d6da191&reqtype=default&trackid=elid:3d294a4831babc7d57169ecda7117a16";
-            try
-            {
-                HttpResponse response = httpclient.execute(new HttpGet(URL));
-                StatusLine statusLine = response.getStatusLine();
-                if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    response.getEntity().writeTo(out);
-                    String responseString = out.toString();
-                    out.close();
-                    Toast.makeText(getApplicationContext(), responseString.toString(), Toast.LENGTH_SHORT).show();
-                    Log.d(MainActivity.class.getSimpleName(), responseString);
-                } else{
-                    //Closes the connection.
-                    response.getEntity().getContent().close();
-                    throw new IOException(statusLine.getReasonPhrase());
-                }
-
-            }
-            catch(Exception e)
-            {
-
-            }
-            Toast.makeText(getApplicationContext(), songName.getText(), Toast.LENGTH_SHORT).show();
+            new RequestTask().execute("http://developer.echonest.com/api/v4/song/search?api_key=SG9MKIPWAVBJV83SU&format=json&artist=radiohead&title=creep&bucket=id:lyricfind-US&limit=true&bucket=tracks");
+//            String URL = "http://developer.echonest.com/api/v4/song/search?api_key=SG9MKIPWAVBJV83SU&format=json&artist=radiohead&title=creep&bucket=id:lyricfind-US&limit=true&bucket=tracks";
+//            try
+//            {
+//                HttpResponse response = httpclient.execute(new HttpGet(URL));
+//                StatusLine statusLine = response.getStatusLine();
+//                if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+//                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+//                    response.getEntity().writeTo(out);
+//                    String responseString = out.toString();
+//                    out.close();
+//                    Log.d(MainActivity.class.getSimpleName(), "OUT IS CLOSED");
+//                    Toast.makeText(getApplicationContext(), responseString, Toast.LENGTH_SHORT).show();
+//                    Log.d(MainActivity.class.getSimpleName(), responseString);
+//                } else{
+//                    //Closes the connection.
+//                    response.getEntity().getContent().close();
+//                    throw new IOException(statusLine.getReasonPhrase());
+//                }
+//
+//            }
+//            catch(Exception e)
+//            {
+//                Log.d(MainActivity.class.getSimpleName(), e.toString());
+//            }
+            //Toast.makeText(getApplicationContext(), songName.getText(), Toast.LENGTH_SHORT).show();
         }
       });
 
@@ -139,5 +142,41 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+}
+
+class RequestTask extends android.os.AsyncTask<String, String, String>{
+
+    @Override
+    protected String doInBackground(String... uri) {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpResponse response;
+        String responseString = null;
+        try {
+            response = httpclient.execute(new HttpGet(uri[0]));
+            StatusLine statusLine = response.getStatusLine();
+            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                response.getEntity().writeTo(out);
+                out.close();
+                responseString = out.toString();
+                Log.d(MainActivity.class.getSimpleName(), responseString);
+            } else{
+                //Closes the connection.
+                response.getEntity().getContent().close();
+                throw new IOException(statusLine.getReasonPhrase());
+            }
+        } catch (ClientProtocolException e) {
+            //TODO Handle problems..
+        } catch (IOException e) {
+            //TODO Handle problems..
+        }
+        return responseString;
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        //Do anything with response..
     }
 }
