@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="/Users/Rohit/Documents/Android/musicPlayer/SwitchUserSample/src/androidTest/res" />
+        <source path="/Users/Rohit/Documents/Android/musicPlayer/SwitchUserSample/build/generated/res/rs/test/debug" />
+        <source path="/Users/Rohit/Documents/Android/musicPlayer/SwitchUserSample/build/generated/res/generated/test/debug" />
+    </dataSet>
+
+</merger>
