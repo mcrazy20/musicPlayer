@@ -88,8 +88,10 @@ public class MainActivity extends ActionBarActivity {
     {
 //        Intent intent = new Intent(this, musicLoader.class);
 //        startActivity(intent);
+        Log.d("Fragment", "Inside Fragment");
         FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
         fl.setVisibility(FrameLayout.VISIBLE);
+        Log.d("Fragment", "Should be visible");
         musicLoaderFragment frag = new musicLoaderFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.fragment_musicloader,frag).commit();
