@@ -10,31 +10,31 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/next_song"
-        android:text="NEXT"
-        android:layout_weight="0"
-        android:onClick="nextSong"
-        />
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/next_song"-->
+        <!--android:text="NEXT"-->
+        <!--android:layout_weight="0"-->
+        <!--android:onClick="nextSong"-->
+        <!--/>-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/previous_song"
-        android:text="LAST"
-        android:layout_weight="0"
-        android:onClick="lastSong"
-        />
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/previous_song"-->
+        <!--android:text="LAST"-->
+        <!--android:layout_weight="0"-->
+        <!--android:onClick="lastSong"-->
+        <!--/>-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/shuffle"
-        android:text="SHUFFLE"
-        android:layout_weight="0"
-        android:onClick="shuffleMusic"
-        />
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/shuffle"-->
+        <!--android:text="SHUFFLE"-->
+        <!--android:layout_weight="0"-->
+        <!--android:onClick="shuffleMusic"-->
+        <!--/>-->
 
 </LinearLayout>
