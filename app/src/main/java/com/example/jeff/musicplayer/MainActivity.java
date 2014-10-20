@@ -17,12 +17,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 
 public class MainActivity extends ActionBarActivity {
     private MediaPlayer mMediaPlayer;
     private String[] mMusicList;
+    private musicLoader mus;
 
 
 
@@ -33,7 +35,9 @@ public class MainActivity extends ActionBarActivity {
 
         Log.d("MAIN", "ON CREATE");
 
+    }
 
+    public void gotoNextSong(View view) throws IOException {
     }
 
     protected void onResume()
