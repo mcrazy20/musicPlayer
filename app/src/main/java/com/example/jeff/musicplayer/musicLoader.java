@@ -37,11 +37,34 @@ import javax.xml.transform.Result;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.music_loader);
+
+        Log.d("MUSICLOADER", "ON CREATE");
+
         mMediaPlayer = new MediaPlayer();
         ListView mListView = (ListView) findViewById(R.id.music_list);
         musicHash = new Hashtable<String, Song>();
         async test = new async();
         test.execute();
+    }
+
+    protected void onResume()
+    {
+        super.onResume();
+
+        Log.d("MUSICLOADER", "ON RESUME");
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("MUSICLOADER", "ON PAUSE");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("MUSICLOADER", "ON STOP");
     }
 
     private void playSong(String path) throws IllegalArgumentException,
@@ -53,6 +76,7 @@ import javax.xml.transform.Result;
         mMediaPlayer.setDataSource(path);
 //mMediaPlayer.setLooping(true);
         mMediaPlayer.prepare();
+
         mMediaPlayer.start();
     }
 
