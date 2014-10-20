@@ -1,5 +1,6 @@
 package com.example.jeff.musicplayer;
 
+import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -84,7 +85,10 @@ public class MainActivity extends ActionBarActivity {
 
     public void moveToMusic(View V)
     {
-        Intent intent = new Intent(this, musicLoader.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, musicLoader.class);
+//        startActivity(intent);
+        musicLoaderFragment frag = new musicLoaderFragment();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_placeholder,frag).commit();
     }
 }

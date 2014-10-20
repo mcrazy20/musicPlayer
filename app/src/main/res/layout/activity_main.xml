@@ -36,6 +36,13 @@
 
     <FrameLayout
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/fragment_musicloader">
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:visibility="gone"
         android:id="@+id/fragment_placeholder">
