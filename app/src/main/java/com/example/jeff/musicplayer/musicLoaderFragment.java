@@ -26,7 +26,7 @@ import java.util.Stack;
  */
 public class musicLoaderFragment extends Fragment {
 
-    private MediaPlayer mMediaPlayer;
+    private static MediaPlayer mMediaPlayer;
     private String[] aMusicList;
     private Hashtable<String, Song> musicHash;
     private Context context;
