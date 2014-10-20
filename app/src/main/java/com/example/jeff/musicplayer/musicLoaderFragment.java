@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import java.io.IOException;
@@ -45,8 +47,17 @@ public class musicLoaderFragment extends Fragment {
         musicHash = new Hashtable<String, Song>();
         async test = new async();
         test.execute();
+        Button btn = (Button) view.findViewById(R.id.btn_song_list_back);
+        btn.setOnClickListener(new View.OnClickListener() {
+                                   @Override
+                                   public void onClick(View view2) {
+                                       ((MainActivity)getActivity()).hideTheFrag();
+                                   }
+                               });
         return view;
     }
+
+
 
     public void musicLoader()
     {

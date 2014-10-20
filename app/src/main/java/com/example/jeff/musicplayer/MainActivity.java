@@ -93,7 +93,12 @@ public class MainActivity extends ActionBarActivity {
         fl.setVisibility(FrameLayout.VISIBLE);
         Log.d("Fragment", "Should be visible");
         musicLoaderFragment frag = new musicLoaderFragment();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
         ft.add(R.id.fragment_musicloader,frag).commit();
+    }
+
+    public void hideTheFrag(){
+        FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
+        fl.setVisibility(FrameLayout.GONE);
     }
 }

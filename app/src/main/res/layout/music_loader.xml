@@ -9,18 +9,16 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"/>
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="LIST LIST LIST"/>
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/next_song"-->
-        <!--android:text="NEXT"-->
-        <!--android:layout_weight="0"-->
-        <!--android:onClick="nextSong"-->
-        <!--/>-->
+
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_song_list_back"
+        android:text="HOME"
+        android:layout_weight="0"
+        android:onClick="destroyFrag"
+        />
 
     <!--<Button-->
         <!--android:layout_width="wrap_content"-->
