@@ -91,7 +91,9 @@
             android:layout_height="wrap_content"
             android:text="Next"
             android:id="@+id/next_song"
-            android:layout_marginLeft="30dp"/>
+            android:layout_marginLeft="30dp"
+            android:onClick="gotoNextSong"
+            />
 
     </LinearLayout>
 

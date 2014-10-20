@@ -47,6 +47,15 @@ import javax.xml.transform.Result;
         test.execute();
     }
 
+    public void musicLoader()
+    {
+        mMediaPlayer = new MediaPlayer();
+        ListView mListView = (ListView) findViewById(R.id.music_list);
+        musicHash = new Hashtable<String, Song>();
+        async test = new async();
+        test.execute();
+    }
+
     protected void onResume()
     {
         super.onResume();
