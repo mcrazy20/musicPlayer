@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import java.io.File;
@@ -87,8 +88,10 @@ public class MainActivity extends ActionBarActivity {
     {
 //        Intent intent = new Intent(this, musicLoader.class);
 //        startActivity(intent);
+        FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
+        fl.setVisibility(FrameLayout.VISIBLE);
         musicLoaderFragment frag = new musicLoaderFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_placeholder,frag).commit();
+        ft.add(R.id.fragment_musicloader,frag).commit();
     }
 }
