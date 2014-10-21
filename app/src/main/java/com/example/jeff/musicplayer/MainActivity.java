@@ -27,14 +27,15 @@ public class MainActivity extends ActionBarActivity {
     private MediaPlayer mMediaPlayer;
     private String[] mMusicList;
     private musicLoader mus;
-
+    private FragmentTransaction ft;
+    private musicLoaderFragment frag;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        frag = new musicLoaderFragment();
         Log.d("MAIN", "ON CREATE");
 
     }
@@ -92,12 +93,12 @@ public class MainActivity extends ActionBarActivity {
         FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
         fl.setVisibility(FrameLayout.VISIBLE);
         Log.d("Fragment", "Should be visible");
-        musicLoaderFragment frag = new musicLoaderFragment();
-        FragmentTransaction ft = getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-        ft.add(R.id.fragment_musicloader,frag).commit();
+        ft = getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        ft.add(R.id.fragment_musicloader, frag, "MusicList").addToBackStack("MusicList").commit();
     }
 
     public void hideTheFrag(){
+        getFragmentManager().popBackStack();
         FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
         fl.setVisibility(FrameLayout.GONE);
     }

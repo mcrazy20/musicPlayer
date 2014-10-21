@@ -52,6 +52,7 @@ public class musicLoaderFragment extends Fragment {
                                    @Override
                                    public void onClick(View view2) {
                                        ((MainActivity)getActivity()).hideTheFrag();
+                                       //getActivity().getFragmentManager().popBackStackImmediate();
                                    }
                                });
         return view;
