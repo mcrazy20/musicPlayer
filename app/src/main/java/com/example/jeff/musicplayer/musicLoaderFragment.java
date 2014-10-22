@@ -174,6 +174,7 @@ public class musicLoaderFragment extends Fragment {
                     try {
                         playSong(musicHash.get(mMusicList[arg2]).getPath());
                         currentSong=arg2;
+                        ((MainActivity)getActivity()).hideTheFrag();
                     } catch (IllegalArgumentException e) {
                         e.printStackTrace();
                     } catch (IllegalStateException e) {
