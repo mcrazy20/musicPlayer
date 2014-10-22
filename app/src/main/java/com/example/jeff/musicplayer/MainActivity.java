@@ -24,18 +24,22 @@ import java.net.URI;
 
 
 public class MainActivity extends ActionBarActivity {
-    private MediaPlayer mMediaPlayer;
+    private static MediaPlayer mMediaPlayer;
     private String[] mMusicList;
     private musicLoader mus;
     private FragmentTransaction ft;
     private musicLoaderFragment frag;
 
+    public MediaPlayer getmMediaPlayer(){
+        return this.mMediaPlayer;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         frag = new musicLoaderFragment();
+        mMediaPlayer = new MediaPlayer();
         Log.d("MAIN", "ON CREATE");
 
     }

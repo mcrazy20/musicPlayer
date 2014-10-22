@@ -35,14 +35,14 @@ public class musicLoaderFragment extends Fragment {
     private Stack<Integer> previousSongs;
     private int currentSong;
     private boolean shuffle = false;
-    View view;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.music_loader,container,false);
-        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer = ((MainActivity)getActivity()).getmMediaPlayer();
         ListView mListView = (ListView) view.findViewById(R.id.music_list);
         musicHash = new Hashtable<String, Song>();
         async test = new async();
