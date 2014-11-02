@@ -1,17 +1,22 @@
 package com.example.jeff.musicplayer;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.MediaController;
 
 import java.io.IOException;
 import java.util.Hashtable;
@@ -21,17 +26,22 @@ import java.util.Stack;
 
 import javax.xml.transform.Result;
 
+import static android.widget.MediaController.*;
+
 /**
  * Created by J on 10/10/2014.
  */
-    public class musicLoader extends Activity {
+    public class musicLoader extends Activity{
     private MediaPlayer mMediaPlayer;
-    private String[] aMusicList;
-    private Hashtable<String, Song> musicHash;
+    public static String[] aMusicList;
+    public static Hashtable<String, Song> musicHash;
     private Context context;
-    private Stack<Integer> previousSongs;
+    public Stack<Integer> previousSongs;
     private int currentSong;
     private boolean shuffle = false;
+
+    private MusicService mService;
+    private boolean mBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +55,10 @@ import javax.xml.transform.Result;
         musicHash = new Hashtable<String, Song>();
         async test = new async();
         test.execute();
+
+        Intent backgroundService = new Intent(this, MusicService.class);
+        startService(backgroundService);
+        bindService(backgroundService, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void musicLoader()
@@ -76,7 +90,7 @@ import javax.xml.transform.Result;
         Log.d("MUSICLOADER", "ON STOP");
     }
 
-    private void playSong(String path) throws IllegalArgumentException,
+    /*private void playSong(String path) throws IllegalArgumentException,
             IllegalStateException, java.io.IOException {
 
         Log.d("ringtone", "playSong :: " + path);
@@ -87,49 +101,7 @@ import javax.xml.transform.Result;
         mMediaPlayer.prepare();
 
         mMediaPlayer.start();
-    }
-
-    public void nextSong(View v) throws IOException {
-        if (!shuffle) {
-            currentSong++;
-            if (currentSong == aMusicList.length) {
-                currentSong = 0;
-            }
-
-            //This is the musicHash giving back a song object then accessing the path;
-            playSong(musicHash.get(aMusicList[currentSong]).getPath());
-        }
-        else
-        {
-            Random rand = new Random();
-            currentSong = rand.nextInt((aMusicList.length) + 1);
-            playSong(musicHash.get(aMusicList[currentSong]).getPath());
-            previousSongs.push(currentSong);
-        }
-    }
-    public void lastSong(View v) throws IOException {
-        if (!shuffle) {
-            currentSong--;
-            if (currentSong < 0) {
-                currentSong = aMusicList.length - 1;
-            }
-            playSong(musicHash.get(aMusicList[currentSong]).getPath());
-        }
-        else
-        {
-            if(previousSongs.empty())
-            {
-                playSong(musicHash.get(aMusicList[0]).getPath());
-                currentSong=0;
-                previousSongs.push(currentSong);
-            }
-            else
-            {
-                currentSong = previousSongs.pop();
-                playSong(musicHash.get(aMusicList[0]).getPath());
-            }
-        }
-    }
+    }*/
 
     public void shuffleMusic(View v)
     {
@@ -159,8 +131,13 @@ import javax.xml.transform.Result;
                 public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                         long arg3) {
                     try {
-                        playSong(musicHash.get(mMusicList[arg2]).getPath());
-                        currentSong=arg2;
+                        //playSong(musicHash.get(mMusicList[arg2]).getPath());
+                        //currentSong=arg2;
+                        //MusicService.setPathOfSong(musicHash.get(mMusicList[arg2]).getPath());
+                        if (mBound) {
+                            mService.setPathOfSong(musicHash.get(mMusicList[arg2]).getPath());
+                            currentSong = arg2;
+                        }
                     } catch (IllegalArgumentException e) {
                         e.printStackTrace();
                     } catch (IllegalStateException e) {
@@ -209,10 +186,27 @@ import javax.xml.transform.Result;
             }
 
             mCursor.close();
+            MainActivity.updateTables();
             return songs;
         }
 
     }
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MusicService.MyBinder binder = (MusicService.MyBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 
 
 

@@ -33,7 +33,6 @@ public class musicLoaderFragment extends Fragment {
     private Hashtable<String, Song> musicHash;
     private Context context;
     private Stack<Integer> previousSongs;
-    private int currentSong;
     private boolean shuffle = false;
     private View view;
 
@@ -60,19 +59,19 @@ public class musicLoaderFragment extends Fragment {
 
 
 
-    public void musicLoader()
+   /* public void musicLoader()
     {
-        mMediaPlayer = new MediaPlayer();
+        //mMediaPlayer = new MediaPlayer();
         ListView mListView = (ListView) view.findViewById(R.id.music_list);
         musicHash = new Hashtable<String, Song>();
         async test = new async();
         test.execute();
-    }
+    }*/
 
     public void onResume()
     {
         super.onResume();
-
+        mMediaPlayer = ((MainActivity)getActivity()).getmMediaPlayer();
         Log.d("MUSICLOADER", "ON RESUME");
 
     }
@@ -96,13 +95,11 @@ public class musicLoaderFragment extends Fragment {
 
         mMediaPlayer.reset();
         mMediaPlayer.setDataSource(path);
-//mMediaPlayer.setLooping(true);
         mMediaPlayer.prepare();
-
         mMediaPlayer.start();
     }
 
-    public void nextSong(View v) throws IOException {
+    /*public void nextSong(View v) throws IOException {
         if (!shuffle) {
             currentSong++;
             if (currentSong == aMusicList.length) {
@@ -147,7 +144,7 @@ public class musicLoaderFragment extends Fragment {
     public void shuffleMusic(View v)
     {
         shuffle = !shuffle;
-    }
+    }*/
 
 
     class async extends AsyncTask<Void, Void, String[]>
@@ -172,8 +169,8 @@ public class musicLoaderFragment extends Fragment {
                 public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                         long arg3) {
                     try {
-                        playSong(musicHash.get(mMusicList[arg2]).getPath());
-                        currentSong=arg2;
+                        MusicService.setPathOfSong(musicHash.get(mMusicList[arg2]).getPath());
+                        MainActivity.currentSong=arg2;
                         ((MainActivity)getActivity()).hideTheFrag();
                     } catch (IllegalArgumentException e) {
                         e.printStackTrace();

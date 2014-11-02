@@ -64,44 +64,11 @@
         android:textStyle="italic"
         android:textSize="20sp"/>
 
-    <SeekBar
-        android:layout_width="match_parent"
+    <MediaController
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center|top"
-        android:layout_marginTop="10dp">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Prev"
-            android:id="@+id/previous_song"
-            android:layout_marginRight="30dp"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Play"
-            android:id="@+id/btn_play"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Next"
-            android:id="@+id/next_song"
-            android:layout_marginLeft="30dp"
-            android:onClick="gotoNextSong"
-            />
-
-    </LinearLayout>
+        android:id="@+id/mainMediaController"
+        android:visibility="visible"
+        />
 
 </LinearLayout>

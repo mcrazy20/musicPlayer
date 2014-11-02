@@ -1,50 +1,60 @@
 package com.example.jeff.musicplayer;
 
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.MediaController;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Hashtable;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements MediaController.MediaPlayerControl{
     private static MediaPlayer mMediaPlayer;
-    private String[] mMusicList;
+    private static String[] mMusicList;
     private musicLoader mus;
     private FragmentTransaction ft;
     private musicLoaderFragment frag;
+    private MediaController mMediaController;
+    MusicService mService;
+    boolean mBound = false;
+    public static Hashtable<String, Song> musicHash;
+    public static int currentSong = 0;
+    private boolean first = true;
 
-    public MediaPlayer getmMediaPlayer(){
-        return this.mMediaPlayer;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         frag = new musicLoaderFragment();
-        mMediaPlayer = new MediaPlayer();
+        Intent backgroundService = new Intent(this, MusicService.class);
+        startService(backgroundService);
+        bindService(backgroundService, mConnection, Context.BIND_AUTO_CREATE);
         Log.d("MAIN", "ON CREATE");
 
-    }
-
-    public void gotoNextSong(View view) throws IOException {
     }
 
     protected void onResume()
@@ -64,7 +74,11 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("MAIN", "ON STOP");
+        // Unbind from the service
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
 
@@ -91,8 +105,6 @@ public class MainActivity extends ActionBarActivity {
 
     public void moveToMusic(View V)
     {
-//        Intent intent = new Intent(this, musicLoader.class);
-//        startActivity(intent);
         Log.d("Fragment", "Inside Fragment");
         FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
         fl.setVisibility(FrameLayout.VISIBLE);
@@ -106,4 +118,97 @@ public class MainActivity extends ActionBarActivity {
         FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
         fl.setVisibility(FrameLayout.GONE);
     }
+
+    public MediaPlayer getmMediaPlayer(){
+        return this.mMediaPlayer;
+    }
+
+    @Override
+    public void start() {
+        if (mBound) {
+            try {
+                mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @Override
+    public void pause() {
+        if (mBound)
+        {
+            mService.pauseMusic();
+        }
+    }
+
+    @Override
+    public int getDuration() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        return 0;
+    }
+
+    @Override
+    public void seekTo(int i) {
+
+    }
+
+    @Override
+    public boolean isPlaying() {
+
+        return mService.isMusicPlaying();
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return false;
+    }
+
+    @Override
+    public int getAudioSessionId() {
+        return 0;
+    }
+
+    public static void updateTables()
+    {
+        musicHash = musicLoader.musicHash;
+        mMusicList = musicLoader.aMusicList;
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MusicService.MyBinder binder = (MusicService.MyBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 }
