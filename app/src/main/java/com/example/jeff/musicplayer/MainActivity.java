@@ -35,11 +35,12 @@ public class MainActivity extends ActionBarActivity{
     private static String[] mMusicList;
     private FragmentTransaction ft;
     private musicLoaderFragment frag;
-    MusicService mService;
+    public static MusicService mService;
     boolean mBound = false;
     public static Hashtable<String, Song> musicHash;
     public static int currentSong = 0;
     private boolean paused = false;
+    public IBinder musicServiceBinder;
 
 
     @Override
@@ -57,7 +58,6 @@ public class MainActivity extends ActionBarActivity{
     protected void onResume()
     {
         super.onResume();
-
         Log.d("MAIN", "ON RESUME");
 
     }
@@ -71,6 +71,13 @@ public class MainActivity extends ActionBarActivity{
     @Override
     protected void onStop() {
         super.onStop();
+
+
+    }
+
+    @Override
+    protected void onDestroy()
+    {
         // Unbind from the service
         if (mBound) {
             unbindService(mConnection);
@@ -79,7 +86,11 @@ public class MainActivity extends ActionBarActivity{
     }
 
 
-
+    public void rebindService()
+    {
+        Intent backgroundService = new Intent(this, MusicService.class);
+        bindService(backgroundService, mConnection, Context.BIND_AUTO_CREATE);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,6 +111,7 @@ public class MainActivity extends ActionBarActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    //This code is used to open our musicLoaderFragment
     public void moveToMusic(View V)
     {
         Log.d("Fragment", "Inside Fragment");
@@ -110,19 +122,21 @@ public class MainActivity extends ActionBarActivity{
         ft.add(R.id.fragment_musicloader, frag, "MusicList").addToBackStack("MusicList").commit();
     }
 
+    //This is called inside the fragment to make sure our fragment disappears when the user is done
     public void hideTheFrag(){
         getFragmentManager().popBackStack();
         FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
         fl.setVisibility(FrameLayout.GONE);
     }
 
-
+    //This gets the tables from musicLoaderFragment before it is destroyed so we have the information
     public static void updateTables()
     {
         musicHash = musicLoaderFragment.musicHash;
         mMusicList = musicLoaderFragment.aMusicList;
     }
 
+    //This is used for binding the music service to the UI thread
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -163,7 +177,9 @@ public class MainActivity extends ActionBarActivity{
     public void playSong(View V)
     {
         updateTables();
+        Log.d("BOUND", "Are we not bound?");
         if (mBound) {
+            Log.d("BOUND", "Are we bound?");
             if (!mService.isMusicPlaying()) {
                 if (paused)
                 {

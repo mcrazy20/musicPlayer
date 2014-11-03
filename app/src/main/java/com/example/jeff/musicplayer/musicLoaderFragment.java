@@ -2,6 +2,7 @@ package com.example.jeff.musicplayer;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
@@ -70,6 +71,7 @@ public class musicLoaderFragment extends Fragment {
     public void onResume()
     {
         super.onResume();
+        ((MainActivity)getActivity()).rebindService();
         Log.d("MUSICLOADER", "ON RESUME");
         Log.d("MUSICLOADER", "WE;RE DOING THINGS HERE???ASDLJDS");
 
@@ -169,7 +171,7 @@ public class musicLoaderFragment extends Fragment {
                 public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                         long arg3) {
                     try {
-                        MusicService.setPathOfSong(musicHash.get(mMusicList[arg2]).getPath());
+                        MainActivity.mService.setPathOfSong(musicHash.get(mMusicList[arg2]).getPath());
                         MainActivity.currentSong=arg2;
                         ((MainActivity)getActivity()).hideTheFrag();
                     } catch (IllegalArgumentException e) {
