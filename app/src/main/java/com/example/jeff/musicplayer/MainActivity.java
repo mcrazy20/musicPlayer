@@ -31,18 +31,15 @@ import java.net.URI;
 import java.util.Hashtable;
 
 
-public class MainActivity extends ActionBarActivity implements MediaController.MediaPlayerControl{
-    private static MediaPlayer mMediaPlayer;
+public class MainActivity extends ActionBarActivity{
     private static String[] mMusicList;
-    private musicLoader mus;
     private FragmentTransaction ft;
     private musicLoaderFragment frag;
-    private MediaController mMediaController;
     MusicService mService;
     boolean mBound = false;
     public static Hashtable<String, Song> musicHash;
     public static int currentSong = 0;
-    private boolean first = true;
+    private boolean paused = false;
 
 
     @Override
@@ -119,80 +116,11 @@ public class MainActivity extends ActionBarActivity implements MediaController.M
         fl.setVisibility(FrameLayout.GONE);
     }
 
-    public MediaPlayer getmMediaPlayer(){
-        return this.mMediaPlayer;
-    }
-
-    @Override
-    public void start() {
-        if (mBound) {
-            try {
-                mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    @Override
-    public void pause() {
-        if (mBound)
-        {
-            mService.pauseMusic();
-        }
-    }
-
-    @Override
-    public int getDuration() {
-        return 0;
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        return 0;
-    }
-
-    @Override
-    public void seekTo(int i) {
-
-    }
-
-    @Override
-    public boolean isPlaying() {
-
-        return mService.isMusicPlaying();
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public boolean canPause() {
-        return false;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return false;
-    }
-
-    @Override
-    public boolean canSeekForward() {
-        return false;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return 0;
-    }
 
     public static void updateTables()
     {
-        musicHash = musicLoader.musicHash;
-        mMusicList = musicLoader.aMusicList;
+        musicHash = musicLoaderFragment.musicHash;
+        mMusicList = musicLoaderFragment.aMusicList;
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -211,4 +139,73 @@ public class MainActivity extends ActionBarActivity implements MediaController.M
             mBound = false;
         }
     };
+
+    public void previousSong(View V)
+    {
+        updateTables();
+        currentSong++;
+        if (currentSong == musicHash.size())
+        {
+            currentSong=0;
+        }
+        if (mBound)
+        {
+            if (mService.isMusicPlaying())
+            {
+                try {
+                    mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    public void playSong(View V)
+    {
+        updateTables();
+        if (mBound) {
+            if (!mService.isMusicPlaying()) {
+                if (paused)
+                {
+                    mService.resumeMusic();
+                }
+                else {
+                    try {
+                        if (!(musicHash ==null || mMusicList == null)) {
+                            mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            else
+            {
+                mService.pauseMusic();
+                paused=true;
+            }
+        }
+    }
+    public void nextSong(View V)
+    {
+        updateTables();
+        currentSong--;
+        if (currentSong < 0)
+        {
+           currentSong=musicHash.size()-1;
+        }
+        if (mBound)
+        {
+            if (mService.isMusicPlaying())
+            {
+                try {
+                    if (!(musicHash ==null || mMusicList == null)) {
+                        mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }

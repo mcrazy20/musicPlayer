@@ -29,8 +29,8 @@ import java.util.Stack;
 public class musicLoaderFragment extends Fragment {
 
     private static MediaPlayer mMediaPlayer;
-    private String[] aMusicList;
-    private Hashtable<String, Song> musicHash;
+    public static String[] aMusicList;
+    public static Hashtable<String, Song> musicHash;
     private Context context;
     private Stack<Integer> previousSongs;
     private boolean shuffle = false;
@@ -41,7 +41,6 @@ public class musicLoaderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.music_loader,container,false);
-        mMediaPlayer = ((MainActivity)getActivity()).getmMediaPlayer();
         ListView mListView = (ListView) view.findViewById(R.id.music_list);
         musicHash = new Hashtable<String, Song>();
         async test = new async();
@@ -71,8 +70,9 @@ public class musicLoaderFragment extends Fragment {
     public void onResume()
     {
         super.onResume();
-        mMediaPlayer = ((MainActivity)getActivity()).getmMediaPlayer();
         Log.d("MUSICLOADER", "ON RESUME");
+        Log.d("MUSICLOADER", "WE;RE DOING THINGS HERE???ASDLJDS");
+
 
     }
 

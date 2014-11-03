@@ -37,7 +37,7 @@ import static android.widget.MediaController.*;
     public static Hashtable<String, Song> musicHash;
     private Context context;
     public Stack<Integer> previousSongs;
-    private int currentSong;
+    public static int currentSong;
     private boolean shuffle = false;
 
     private MusicService mService;
@@ -47,9 +47,6 @@ import static android.widget.MediaController.*;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.music_loader);
-
-        Log.d("MUSICLOADER", "ON CREATE");
-
         mMediaPlayer = new MediaPlayer();
         ListView mListView = (ListView) findViewById(R.id.music_list);
         musicHash = new Hashtable<String, Song>();
