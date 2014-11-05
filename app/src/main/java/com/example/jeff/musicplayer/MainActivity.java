@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Hashtable;
 
-    public class MainActivity extends ActionBarActivity{
+    public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener{
     private static String[] mMusicList;
     private FragmentTransaction ft;
     private musicLoaderFragment frag;
@@ -54,7 +54,7 @@ import java.util.Hashtable;
         startService(backgroundService);
         bindService(backgroundService, mConnection, Context.BIND_AUTO_CREATE);
 
-
+        //This is used to update the seekbar
         Runnable moveSeekBarThread = new Runnable() {
 
             public void run() {
@@ -70,7 +70,10 @@ import java.util.Hashtable;
                 // seconds
             }
         };
+
+        //This is finding it and running the runnable created earlier
         seek = (SeekBar)findViewById(R.id.mainSeekBar);
+        seek.setOnSeekBarChangeListener(this);
         handler = new Handler();
         handler.removeCallbacks(moveSeekBarThread);
         handler.postDelayed(moveSeekBarThread, 100);
@@ -102,10 +105,10 @@ import java.util.Hashtable;
     protected void onDestroy() {
         super.onDestroy();
         // Unbind from the service
-        /*if (mBound) {
+        if (mBound) {
             unbindService(mConnection);
             mBound = false;
-        }*/
+        }
     }
 
     public void rebindService()
@@ -245,4 +248,24 @@ import java.util.Hashtable;
             }
         }
     }
-}
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            if (b)
+            {
+                Log.d("IN ON PROGRESS", "SEEKING: "+i);
+                mService.changeMPosition(i);
+                seek.setProgress(i);
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    }
