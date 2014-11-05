@@ -68,6 +68,17 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
     }
 
+    public static int getMDuration()
+    {
+        return mMediaPlayer.getDuration();
+    }
+
+    public static int getMCurrentPosition()
+    {
+        return mMediaPlayer.getCurrentPosition();
+    }
+
+
     public static boolean isMusicPlaying()
     {
         return mMediaPlayer.isPlaying();

@@ -24,14 +24,14 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.MediaController;
+import android.widget.SeekBar;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Hashtable;
 
-
-public class MainActivity extends ActionBarActivity{
+    public class MainActivity extends ActionBarActivity{
     private static String[] mMusicList;
     private FragmentTransaction ft;
     private musicLoaderFragment frag;
@@ -41,6 +41,8 @@ public class MainActivity extends ActionBarActivity{
     public static int currentSong = 0;
     private boolean paused = false;
     public IBinder musicServiceBinder;
+    private SeekBar seek;
+    private Handler handler;
 
 
     @Override
@@ -51,6 +53,27 @@ public class MainActivity extends ActionBarActivity{
         Intent backgroundService = new Intent(this, MusicService.class);
         startService(backgroundService);
         bindService(backgroundService, mConnection, Context.BIND_AUTO_CREATE);
+
+
+        Runnable moveSeekBarThread = new Runnable() {
+
+            public void run() {
+                if (mBound) {
+                    if (mService.isMusicPlaying()) {
+                        int mediaPos_new = mService.getMCurrentPosition();
+                        int mediaMax_new = mService.getMDuration();
+                        seek.setMax(mediaMax_new);
+                        seek.setProgress(mediaPos_new);
+                    }
+                }
+                handler.postDelayed(this, 100); //Looping the thread after 0.1 second
+                // seconds
+            }
+        };
+        seek = (SeekBar)findViewById(R.id.mainSeekBar);
+        handler = new Handler();
+        handler.removeCallbacks(moveSeekBarThread);
+        handler.postDelayed(moveSeekBarThread, 100);
         Log.d("MAIN", "ON CREATE");
 
     }
@@ -76,15 +99,14 @@ public class MainActivity extends ActionBarActivity{
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
+        super.onDestroy();
         // Unbind from the service
-        if (mBound) {
+        /*if (mBound) {
             unbindService(mConnection);
             mBound = false;
-        }
+        }*/
     }
-
 
     public void rebindService()
     {
@@ -134,6 +156,7 @@ public class MainActivity extends ActionBarActivity{
     {
         musicHash = musicLoaderFragment.musicHash;
         mMusicList = musicLoaderFragment.aMusicList;
+
     }
 
     //This is used for binding the music service to the UI thread
@@ -177,9 +200,7 @@ public class MainActivity extends ActionBarActivity{
     public void playSong(View V)
     {
         updateTables();
-        Log.d("BOUND", "Are we not bound?");
         if (mBound) {
-            Log.d("BOUND", "Are we bound?");
             if (!mService.isMusicPlaying()) {
                 if (paused)
                 {
