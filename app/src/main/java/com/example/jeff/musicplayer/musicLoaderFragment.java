@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.Hashtable;
@@ -29,20 +30,16 @@ import java.util.Stack;
  */
 public class musicLoaderFragment extends Fragment {
 
-    private static MediaPlayer mMediaPlayer;
     public static String[] aMusicList;
     public static Hashtable<String, Song> musicHash;
-    private Context context;
-    private Stack<Integer> previousSongs;
-    private boolean shuffle = false;
     private View view;
+    private String TAG = "MusicLoaderFrag";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //return super.onCreateView(inflater, container, savedInstanceState);
+
         view = inflater.inflate(R.layout.music_loader,container,false);
-        ListView mListView = (ListView) view.findViewById(R.id.music_list);
         musicHash = new Hashtable<String, Song>();
         async test = new async();
         test.execute();
@@ -51,102 +48,29 @@ public class musicLoaderFragment extends Fragment {
                                    @Override
                                    public void onClick(View view2) {
                                        ((MainActivity)getActivity()).hideTheFrag();
-                                       //getActivity().getFragmentManager().popBackStackImmediate();
                                    }
                                });
         return view;
     }
 
-
-
-   /* public void musicLoader()
-    {
-        //mMediaPlayer = new MediaPlayer();
-        ListView mListView = (ListView) view.findViewById(R.id.music_list);
-        musicHash = new Hashtable<String, Song>();
-        async test = new async();
-        test.execute();
-    }*/
-
     public void onResume()
     {
         super.onResume();
         ((MainActivity)getActivity()).rebindService();
-        Log.d("MUSICLOADER", "ON RESUME");
-        Log.d("MUSICLOADER", "WE;RE DOING THINGS HERE???ASDLJDS");
-
-
+        Log.d(TAG,"ON RESUME");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("MUSICLOADER", "ON PAUSE");
+        Log.d(TAG, "ON PAUSE");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("MUSICLOADER", "ON STOP");
+        Log.d(TAG, "ON STOP");
     }
-
-    private void playSong(String path) throws IllegalArgumentException,
-            IllegalStateException, java.io.IOException {
-
-        Log.d("ringtone", "playSong :: " + path);
-
-        mMediaPlayer.reset();
-        mMediaPlayer.setDataSource(path);
-        mMediaPlayer.prepare();
-        mMediaPlayer.start();
-    }
-
-    /*public void nextSong(View v) throws IOException {
-        if (!shuffle) {
-            currentSong++;
-            if (currentSong == aMusicList.length) {
-                currentSong = 0;
-            }
-
-            //This is the musicHash giving back a song object then accessing the path;
-            playSong(musicHash.get(aMusicList[currentSong]).getPath());
-        }
-        else
-        {
-            Random rand = new Random();
-            currentSong = rand.nextInt((aMusicList.length) + 1);
-            playSong(musicHash.get(aMusicList[currentSong]).getPath());
-            previousSongs.push(currentSong);
-        }
-    }
-    public void lastSong(View v) throws IOException {
-        if (!shuffle) {
-            currentSong--;
-            if (currentSong < 0) {
-                currentSong = aMusicList.length - 1;
-            }
-            playSong(musicHash.get(aMusicList[currentSong]).getPath());
-        }
-        else
-        {
-            if(previousSongs.empty())
-            {
-                playSong(musicHash.get(aMusicList[0]).getPath());
-                currentSong=0;
-                previousSongs.push(currentSong);
-            }
-            else
-            {
-                currentSong = previousSongs.pop();
-                playSong(musicHash.get(aMusicList[0]).getPath());
-            }
-        }
-    }
-
-    public void shuffleMusic(View v)
-    {
-        shuffle = !shuffle;
-    }*/
 
 
     class async extends AsyncTask<Void, Void, String[]>
@@ -158,14 +82,15 @@ public class musicLoaderFragment extends Fragment {
             mMusicList = getMusic();
             return mMusicList;
         }
+
         protected void onPostExecute(String[] list)
         {
-            ListView testlist = (ListView) view.findViewById(R.id.music_list);
+            ListView musicList = (ListView) view.findViewById(R.id.music_list);
             ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(view.getContext(),
                     android.R.layout.simple_list_item_1, mMusicList);
-            testlist.setAdapter(mAdapter);
+            musicList.setAdapter(mAdapter);
 
-            testlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            musicList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -174,19 +99,16 @@ public class musicLoaderFragment extends Fragment {
                         MainActivity.mService.setPathOfSong(musicHash.get(mMusicList[arg2]).getPath());
                         MainActivity.currentSong=arg2;
                         ((MainActivity)getActivity()).hideTheFrag();
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
-                    } catch (java.io.IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             });
+
             aMusicList = mMusicList;
 
-
         }
+
         public String[] getMusic() {
             final Cursor mCursor = view.getContext().getContentResolver().query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -226,7 +148,5 @@ public class musicLoaderFragment extends Fragment {
         }
 
     }
-
-
 
 }

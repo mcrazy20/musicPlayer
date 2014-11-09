@@ -40,7 +40,7 @@ import java.util.Hashtable;
     public static Hashtable<String, Song> musicHash;
     public static int currentSong = 0;
     private boolean paused = false;
-    public IBinder musicServiceBinder;
+    //public IBinder musicServiceBinder;
     private SeekBar seek;
     private Handler handler;
 
