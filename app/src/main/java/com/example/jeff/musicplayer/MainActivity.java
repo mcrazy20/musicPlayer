@@ -21,10 +21,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +45,7 @@ import java.util.Hashtable;
     //public IBinder musicServiceBinder;
     private SeekBar seek;
     private Handler handler;
+    private Button playButton;
 
 
     @Override
@@ -70,6 +73,8 @@ import java.util.Hashtable;
                 // seconds
             }
         };
+
+        playButton = (Button) findViewById(R.id.btn_play);
 
         //This is finding it and running the runnable created earlier
         seek = (SeekBar)findViewById(R.id.mainSeekBar);
@@ -180,14 +185,30 @@ import java.util.Hashtable;
         }
     };
 
+    protected void changeCurrentSongName(int index){
+        if(mService.isMusicPlaying()){
+            playButton.setText("Pause");
+        }
+        String name = mMusicList[index];
+        name = name + " - " + musicHash.get(mMusicList[index]).getArtist();
+        TextView tv = (TextView) findViewById(R.id.layout_current_song);
+        tv.setText(name);
+    }
+
+    public void songFromList(int index) throws IOException{
+        changeCurrentSongName(index);
+        mService.setPathOfSong(musicHash.get(mMusicList[index]).getPath());
+    }
+
     public void previousSong(View V)
     {
-        updateTables();
-        currentSong++;
-        if (currentSong == musicHash.size())
+        //updateTables();
+        currentSong--;
+        if (currentSong < 0)
         {
-            currentSong=0;
+            currentSong=mMusicList.length-1;
         }
+        changeCurrentSongName(currentSong);
         if (mBound)
         {
             if (mService.isMusicPlaying())
@@ -202,11 +223,11 @@ import java.util.Hashtable;
     }
     public void playSong(View V)
     {
-        updateTables();
         if (mBound) {
             if (!mService.isMusicPlaying()) {
                 if (paused)
                 {
+                    playButton.setText("Pause");
                     mService.resumeMusic();
                 }
                 else {
@@ -221,6 +242,7 @@ import java.util.Hashtable;
             }
             else
             {
+                playButton.setText("Play");
                 mService.pauseMusic();
                 paused=true;
             }
@@ -228,12 +250,13 @@ import java.util.Hashtable;
     }
     public void nextSong(View V)
     {
-        updateTables();
-        currentSong--;
-        if (currentSong < 0)
+        //updateTables();
+        currentSong++;
+        if (currentSong == mMusicList.length)
         {
-           currentSong=musicHash.size()-1;
+           currentSong=0;
         }
+        changeCurrentSongName(currentSong);
         if (mBound)
         {
             if (mService.isMusicPlaying())

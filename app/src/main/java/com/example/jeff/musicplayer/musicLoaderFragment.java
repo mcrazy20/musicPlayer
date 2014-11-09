@@ -97,7 +97,7 @@ public class musicLoaderFragment extends Fragment {
                                         long arg3) {
                     try {
                         Log.d(TAG,"Setting path for new song");
-                        MainActivity.mService.setPathOfSong(musicHash.get(mMusicList[arg2]).getPath());
+                        ((MainActivity)getActivity()).songFromList(arg2);//musicHash.get(mMusicList[arg2]).getPath());
                         MainActivity.currentSong=arg2;
                         ((MainActivity)getActivity()).hideTheFrag();
                     } catch (Exception e) {
@@ -107,7 +107,7 @@ public class musicLoaderFragment extends Fragment {
             });
 
             aMusicList = mMusicList;
-
+            MainActivity.updateTables();
         }
 
         public String[] getMusic() {
