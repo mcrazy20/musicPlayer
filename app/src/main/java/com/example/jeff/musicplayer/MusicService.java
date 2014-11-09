@@ -13,7 +13,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     private static MediaPlayer mMediaPlayer = new MediaPlayer();
     private static String pathOfSong;
-    private final String TAG = ((Object)this).getClass().getSimpleName();
+    //private static final String TAG = ((Object)this).getClass().getSimpleName();
+    private static String TAG = "MusicService";
     private final IBinder binder = new MyBinder();
     public class MyBinder extends Binder{
         MusicService getService()
@@ -43,13 +44,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         Log.d(TAG, "In on start");
         return 0;
     }
+
     public static void setPathOfSong(String path) throws IOException {
+
         pathOfSong=path;
         mMediaPlayer.reset();
         mMediaPlayer.setDataSource(path);
-        //mMediaPlayer.prepareAsync();
+        Log.d(TAG,"Starting new song");
         mMediaPlayer.prepare();
         mMediaPlayer.start();
+
     }
 
     public static void pauseMusic()

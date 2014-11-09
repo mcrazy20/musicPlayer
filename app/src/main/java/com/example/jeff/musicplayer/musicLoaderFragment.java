@@ -96,6 +96,7 @@ public class musicLoaderFragment extends Fragment {
                 public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                         long arg3) {
                     try {
+                        Log.d(TAG,"Setting path for new song");
                         MainActivity.mService.setPathOfSong(musicHash.get(mMusicList[arg2]).getPath());
                         MainActivity.currentSong=arg2;
                         ((MainActivity)getActivity()).hideTheFrag();
@@ -112,13 +113,12 @@ public class musicLoaderFragment extends Fragment {
         public String[] getMusic() {
             final Cursor mCursor = view.getContext().getContentResolver().query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    new String[]{MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.DATA}, null, null,
+                    new String[]{MediaStore.Audio.Media.DISPLAY_NAME,MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,MediaStore.Audio.Media.ALBUM,MediaStore.Audio.Media.DATA}, null, null,
                     "LOWER(" + MediaStore.Audio.Media.TITLE + ") ASC");
 
             int count = mCursor.getCount();
 
             String[] songs = new String[count];
-            String[] mAudioPath = new String[count];
             int i = 0;
             if (mCursor.moveToFirst()) {
                 do {
@@ -137,9 +137,10 @@ public class musicLoaderFragment extends Fragment {
                         albumName = mCursor.getString(mCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                     }
                     Song song = new Song(path, artist, albumName);
-                    songs[i] = mCursor.getString(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));
+                    songs[i] = mCursor.getString(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
                     musicHash.put(songs[i], song);
                     i++;
+
                 } while (mCursor.moveToNext());
             }
 

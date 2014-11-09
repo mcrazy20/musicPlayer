@@ -119,7 +119,7 @@ import static android.widget.MediaController.*;
         {
             ListView testlist = (ListView) findViewById(R.id.music_list);
             ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(getApplicationContext(),
-                    android.R.layout.simple_list_item_1, mMusicList);
+                    android.R.layout.simple_list_item_2, mMusicList);
             testlist.setAdapter(mAdapter);
 
             testlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -204,7 +204,5 @@ import static android.widget.MediaController.*;
             mBound = false;
         }
     };
-
-
 
 }
