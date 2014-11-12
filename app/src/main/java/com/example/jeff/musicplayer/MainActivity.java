@@ -1,10 +1,12 @@
 package com.example.jeff.musicplayer;
 
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.media.MediaPlayer;
@@ -12,6 +14,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,9 +34,12 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Random;
+import java.util.Stack;
 
-    public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener{
+public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener{
     private static String[] mMusicList;
     private FragmentTransaction ft;
     private musicLoaderFragment frag;
@@ -42,11 +48,12 @@ import java.util.Hashtable;
     public static Hashtable<String, Song> musicHash;
     public static int currentSong = 0;
     private boolean paused = false;
-    //public IBinder musicServiceBinder;
     private SeekBar seek;
     private Handler handler;
     private Button playButton;
-
+    private Stack<Integer> shuffleStack;
+    private boolean shuffle = false;
+    Random rand = new Random();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +183,14 @@ import java.util.Hashtable;
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             MusicService.MyBinder binder = (MusicService.MyBinder) service;
             mService = binder.getService();
+            mService.getmMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.reset();
+                    Log.d("ONCOMPLETETIONLISTENER", "Doing this?");
+                    nextSong(findViewById(R.id.btn_next));
+                }
+            });
             mBound = true;
         }
 
@@ -251,23 +266,41 @@ import java.util.Hashtable;
     public void nextSong(View V)
     {
         //updateTables();
-        currentSong++;
-        if (currentSong == mMusicList.length)
+        if (shuffle)
         {
-           currentSong=0;
-        }
-        changeCurrentSongName(currentSong);
-        if (mBound)
-        {
-            if (mService.isMusicPlaying())
-            {
-                try {
-                    if (!(musicHash ==null || mMusicList == null)) {
-                        mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+            if (mBound) {
+            int currentSong = rand.nextInt(mMusicList.length);
+            changeCurrentSongName(currentSong);
+                if (mService.isMusicPlaying()) {
+                    try {
+                        if (!(musicHash == null || mMusicList == null)) {
+                            mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+                shuffleStack.push(currentSong);
+            }
+
+
+        }
+        else {
+            currentSong++;
+            if (currentSong == mMusicList.length) {
+                currentSong = 0;
+            }
+            changeCurrentSongName(currentSong);
+            if (mBound) {
+                //if (mService.isMusicPlaying()) {
+                    try {
+                        if (!(musicHash == null || mMusicList == null)) {
+                            mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+               // }
             }
         }
     }

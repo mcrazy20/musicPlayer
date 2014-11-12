@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -34,14 +35,26 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        Log.d(TAG, "In on prepared");
-        mMediaPlayer.start();
+        Log.d("STUFF", "In on prepared");
+        mediaPlayer.start();
+        if (!mediaPlayer.isPlaying())
+        {
+            Log.d("DAFUQ", "WHY NO PLAY?");
+        }
     }
 
     @Override
     public int onStartCommand(Intent i, int q, int r)
     {
         Log.d(TAG, "In on start");
+       /* mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                Intent intent = new Intent("song-finished");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+            }
+        });*/
+        mMediaPlayer.setOnPreparedListener(this);
         return 0;
     }
 
@@ -51,8 +64,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         mMediaPlayer.reset();
         mMediaPlayer.setDataSource(path);
         Log.d(TAG,"Starting new song");
-        mMediaPlayer.prepare();
-        mMediaPlayer.start();
+        mMediaPlayer.prepareAsync();
+        //mMediaPlayer.start();
 
     }
 
@@ -89,5 +102,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public static boolean isMusicPlaying()
     {
         return mMediaPlayer.isPlaying();
+    }
+
+    public static MediaPlayer getmMediaPlayer()
+    {
+        return mMediaPlayer;
     }
 }
