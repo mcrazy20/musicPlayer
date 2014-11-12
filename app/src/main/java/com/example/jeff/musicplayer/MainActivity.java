@@ -6,9 +6,11 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -27,10 +29,26 @@ import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
     public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener{
@@ -46,6 +64,8 @@ import java.util.Hashtable;
     private SeekBar seek;
     private Handler handler;
     private Button playButton;
+    private static CurrentSession currentSession;
+    private String serverURL = "https://musicplayerserver.herokuapp.com/";
 
 
     @Override
@@ -82,8 +102,18 @@ import java.util.Hashtable;
         handler = new Handler();
         handler.removeCallbacks(moveSeekBarThread);
         handler.postDelayed(moveSeekBarThread, 100);
+        currentSession = new CurrentSession();
+        String[] s = new String[8];
+        s[0] = serverURL+"log_user";
+        s[1] = "POST";
+        s[2] = "facebook_id";
+        s[3] = "1234";
+        s[4] = "name";
+        s[5] = "Roka";
+        s[6] = "email";
+        s[7] = "test@test.com";
+        new HttpAsync().execute(s);
         Log.d("MAIN", "ON CREATE");
-
     }
 
     protected void onResume()
@@ -97,12 +127,25 @@ import java.util.Hashtable;
     protected void onPause() {
         super.onPause();
         Log.d("MAIN", "ON PAUSE");
+        String[] s = new String[8];
+        s[0] = serverURL+"update_session";
+        s[1] = "POST";
+        JSONObject songObject = currentSession.getSongs();          //Getting Top 10 songs
+        JSONObject artistObject = currentSession.getArtists();      //Getting Top 10 artists
+        s[2] = "songs";
+        s[3] = songObject.toString();
+        Log.d("songDATA",s[3]);
+        s[4] = "artists";
+        s[5] = artistObject.toString();
+        s[6] = "facebook_id";
+        s[7] = "1234";
+        Log.d("artistDATA",s[5]);
+        new HttpAsync().execute(s);                                 //Updating the Heroku Server
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
 
     }
 
@@ -190,9 +233,13 @@ import java.util.Hashtable;
             playButton.setText("Pause");
         }
         String name = mMusicList[index];
-        name = name + " - " + musicHash.get(mMusicList[index]).getArtist();
+        currentSession.updateSongCount(name);
+        String artist = musicHash.get(mMusicList[index]).getArtist();
+        currentSession.updateArtistCount(artist);
+        name += " - " + artist;
         TextView tv = (TextView) findViewById(R.id.layout_current_song);
         tv.setText(name);
+
     }
 
     public void songFromList(int index) throws IOException{
@@ -291,4 +338,105 @@ import java.util.Hashtable;
         public void onStopTrackingTouch(SeekBar seekBar) {
 
         }
+
+        public static String POST(String... strings){
+
+            InputStream inputStream = null;
+            String result = "";
+
+            try {
+                HttpPost request = new HttpPost(strings[0]);
+
+                ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+
+                for(int i = 2; i<strings.length; i=i+2){
+                    if(strings[i+1]!=null)
+                        params.add(new BasicNameValuePair(strings[i], strings[i + 1]));
+                }
+
+                if(!params.isEmpty()){
+                    request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+                }
+
+                Log.d("ArrayList",params.toString());
+
+                HttpClient client = new DefaultHttpClient();
+
+                HttpResponse httpResponse = client.execute(request);
+
+                inputStream = httpResponse.getEntity().getContent();
+
+                // convert inputstream to string
+                if(inputStream != null)
+                    result = convertInputStreamToString(inputStream);
+                else
+                    result = "Did not work!";
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+
+        public static String GET(String url){
+
+            InputStream inputStream = null;
+            String result = "";
+            try{
+                // create HttpClient
+                HttpClient httpclient = new DefaultHttpClient();
+
+                // make GET request to the given URL
+                HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
+
+                // receive response as inputStream
+                inputStream = httpResponse.getEntity().getContent();
+
+                // convert inputstream to string
+                if(inputStream != null)
+                    result = convertInputStreamToString(inputStream);
+                else
+                    result = "Did not work!";
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+
+        private static String convertInputStreamToString(InputStream inputStream) throws IOException {
+            BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+            String line = "";
+            String result = "";
+            while((line = bufferedReader.readLine()) != null)
+                result += line;
+
+            inputStream.close();
+            return result;
+
+        }
+
+        private class HttpAsync extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected String doInBackground(String... strings) {
+                if(strings[1]=="GET"){
+                    return GET(strings[0]);
+                }
+                else{
+                    return POST(strings);
+                }
+            }
+
+            // onPostExecute displays the results of the AsyncTask.
+            @Override
+            protected void onPostExecute(String result) {
+                //Toast.makeText(getApplicationContext(),"Received!", Toast.LENGTH_LONG).show();
+                Log.d("HEROKU",result);
+            }
+        }
+
     }
