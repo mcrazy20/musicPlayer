@@ -228,8 +228,10 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         int albumId = musicHash.get(mMusicList[index]).getAlbumName();
         String albumPath = albumHash.get(albumId);
         ImageView img = (ImageView)findViewById(R.id.img_albumart);
-        if (albumPath!="") {
+       // Log.d("CHANGEALBUMART", albumPath);
+        if (albumPath!= null) {
             Bitmap bitmap = BitmapFactory.decodeFile(albumPath);
+            //bitmap=Bitmap.createScaledBitmap(bitmap, 500,500, true);
             img.setImageBitmap(bitmap);
         }
         else
@@ -249,25 +251,27 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         //updateTables();
         if (shuffle)
         {
-            if (shuffleStack.empty())
-            {
-                currentSong=0;
-            }
-            else
-            {
-                currentSong = shuffleStack.pop();
+            if (mBound) {
+                int currentSong = rand.nextInt(mMusicList.length);
+                changeAlbumArt(currentSong);
+                changeCurrentSongName(currentSong);
                 try {
-                    mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                    if (!(musicHash == null || mMusicList == null)) {
+                        mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                shuffleStack.push(currentSong);
             }
+
         }
         else {
             currentSong--;
             if (currentSong < 0) {
                 currentSong = mMusicList.length - 1;
             }
+            changeAlbumArt(currentSong);
             changeCurrentSongName(currentSong);
             if (mBound) {
                 if (mService.isMusicPlaying()) {
@@ -325,7 +329,6 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
                     }
                 shuffleStack.push(currentSong);
             }
-
 
         }
         else {
