@@ -6,13 +6,13 @@ package com.example.jeff.musicplayer;
 public class Song {
     private String artist;
     private String path;
-    private String albumName;
+    private int albumId;
 
-    public Song(String p, String a, String an)
+    public Song(String p, String a,int an)
     {
         artist = a;
         path = p;
-        albumName = an;
+        albumId = an;
     }
 
     public String getArtist()
@@ -23,8 +23,8 @@ public class Song {
     {
         return path;
     }
-    public String getAlbumName()
+    public int getAlbumName()
     {
-        return albumName;
+        return albumId;
     }
 }

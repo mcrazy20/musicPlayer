@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -27,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.SeekBar;
@@ -36,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.Stack;
@@ -47,6 +52,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     public static MusicService mService;
     boolean mBound = false;
     public static Hashtable<String, Song> musicHash;
+    public static HashMap<Integer, String> albumHash;
     public static int currentSong = 0;
     private boolean paused = false;
     private SeekBar seek;
@@ -173,6 +179,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     {
         musicHash = musicLoaderFragment.musicHash;
         mMusicList = musicLoaderFragment.aMusicList;
+        albumHash = musicLoaderFragment.albumHash;
 
     }
 
@@ -210,6 +217,22 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         name = name + " - " + musicHash.get(mMusicList[index]).getArtist();
         TextView tv = (TextView) findViewById(R.id.layout_current_song);
         tv.setText(name);
+    }
+
+    private void changeAlbumArt(int index)
+    {
+        int albumId = musicHash.get(mMusicList[index]).getAlbumName();
+        String albumPath = albumHash.get(albumId);
+        ImageView img = (ImageView)findViewById(R.id.img_albumart);
+        if (albumPath!="") {
+            Bitmap bitmap = BitmapFactory.decodeFile(albumPath);
+            img.setImageBitmap(bitmap);
+        }
+        else
+        {
+            img.setImageDrawable(getResources().getDrawable(R.drawable.music));
+        }
+
     }
 
     public void songFromList(int index) throws IOException{
@@ -287,6 +310,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         {
             if (mBound) {
             int currentSong = rand.nextInt(mMusicList.length);
+            changeAlbumArt(currentSong);
             changeCurrentSongName(currentSong);
                     try {
                         if (!(musicHash == null || mMusicList == null)) {
@@ -301,13 +325,15 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
         }
         else {
-            currentSong++;
-            if (currentSong == mMusicList.length) {
-                currentSong = 0;
-            }
-            changeCurrentSongName(currentSong);
             if (mBound) {
-                //if (mService.isMusicPlaying()) {
+                currentSong++;
+                if (currentSong == mMusicList.length) {
+                    currentSong = 0;
+                }
+                changeCurrentSongName(currentSong);
+                changeAlbumArt(currentSong);
+                if (mBound) {
+                    //if (mService.isMusicPlaying()) {
                     try {
                         if (!(musicHash == null || mMusicList == null)) {
                             mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
@@ -315,7 +341,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-               // }
+                    // }
+                }
             }
         }
     }

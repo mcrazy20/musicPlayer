@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.Stack;
@@ -31,7 +32,9 @@ import java.util.Stack;
 public class musicLoaderFragment extends Fragment {
 
     public static String[] aMusicList;
+    public static String[] albumIds;
     public static Hashtable<String, Song> musicHash;
+    public static HashMap<Integer, String> albumHash;
     private View view;
     private String TAG = "MusicLoaderFrag";
 
@@ -41,6 +44,7 @@ public class musicLoaderFragment extends Fragment {
 
         view = inflater.inflate(R.layout.music_loader,container,false);
         musicHash = new Hashtable<String, Song>();
+        albumHash = new HashMap<Integer, String>();
         async test = new async();
         test.execute();
         Button btn = (Button) view.findViewById(R.id.btn_song_list_back);
@@ -113,8 +117,12 @@ public class musicLoaderFragment extends Fragment {
         public String[] getMusic() {
             final Cursor mCursor = view.getContext().getContentResolver().query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    new String[]{MediaStore.Audio.Media.DISPLAY_NAME,MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,MediaStore.Audio.Media.ALBUM,MediaStore.Audio.Media.DATA}, null, null,
+                    new String[]{MediaStore.Audio.Media.DISPLAY_NAME,MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,MediaStore.Audio.Media.ALBUM_ID,MediaStore.Audio.Media.DATA}, null, null,
                     "LOWER(" + MediaStore.Audio.Media.TITLE + ") ASC");
+            final Cursor albumCursor = view.getContext().getContentResolver().query(
+                    MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                    new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART}, null, null,
+                    "LOWER(" + MediaStore.Audio.Albums._ID + ") ASC");
 
             int count = mCursor.getCount();
 
@@ -123,7 +131,7 @@ public class musicLoaderFragment extends Fragment {
             if (mCursor.moveToFirst()) {
                 do {
                     String artist;
-                    String albumName;
+                    int albumName;
                     String path = mCursor.getString(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
                     if (mCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST) == -1) {
                         artist = "";
@@ -131,10 +139,10 @@ public class musicLoaderFragment extends Fragment {
                         artist = mCursor.getString(mCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                     }
 
-                    if (mCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM) == -1) {
-                        albumName = "";
+                    if (mCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID) == -1) {
+                        albumName =0;
                     } else {
-                        albumName = mCursor.getString(mCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                        albumName = mCursor.getInt(mCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
                     }
                     Song song = new Song(path, artist, albumName);
                     songs[i] = mCursor.getString(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
@@ -145,6 +153,24 @@ public class musicLoaderFragment extends Fragment {
             }
 
             mCursor.close();
+            if (albumCursor.moveToFirst())
+            {
+                int albumId = 0;
+                String albumArt ="";
+                do {
+                    albumId = albumCursor.getInt(albumCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));
+                    if (albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART) == -1)
+                    {
+                        Log.d("GETTINGALBUMS", "Here? 2");
+                    }
+                    else
+                    {
+                        albumArt = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+                    }
+                    albumHash.put(albumId, albumArt);
+                } while (albumCursor.moveToNext());
+                albumCursor.close();
+            }
             return songs;
         }
 

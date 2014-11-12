@@ -162,7 +162,7 @@ import static android.widget.MediaController.*;
             if (mCursor.moveToFirst()) {
                 do {
                     String artist;
-                    String albumName;
+                    int albumName;
                     String path = mCursor.getString(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
                     if (mCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST) == -1) {
                         artist = "";
@@ -171,9 +171,9 @@ import static android.widget.MediaController.*;
                     }
 
                     if (mCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM) == -1) {
-                        albumName = "";
+                        albumName = 0;
                     } else {
-                        albumName = mCursor.getString(mCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                        albumName = mCursor.getInt(mCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                     }
                     Song song = new Song(path, artist, albumName);
                     songs[i] = mCursor.getString(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));
