@@ -436,7 +436,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     public void onShake() {
         shuffleSongs(findViewById(R.id.shuffleButton));
     }
-}
+
         public static String POST(String... strings){
 
             InputStream inputStream = null;
