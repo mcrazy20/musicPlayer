@@ -120,7 +120,6 @@ import java.util.Hashtable;
     {
         super.onResume();
         Log.d("MAIN", "ON RESUME");
-
     }
 
     @Override
@@ -233,9 +232,9 @@ import java.util.Hashtable;
             playButton.setText("Pause");
         }
         String name = mMusicList[index];
-        currentSession.updateSongCount(name);
+        currentSession.updateSongCount(name,1);
         String artist = musicHash.get(mMusicList[index]).getArtist();
-        currentSession.updateArtistCount(artist);
+        currentSession.updateArtistCount(artist,1);
         name += " - " + artist;
         TextView tv = (TextView) findViewById(R.id.layout_current_song);
         tv.setText(name);
@@ -421,6 +420,7 @@ import java.util.Hashtable;
 
         private class HttpAsync extends AsyncTask<String, Void, String> {
 
+
             @Override
             protected String doInBackground(String... strings) {
                 if(strings[1]=="GET"){
@@ -434,8 +434,9 @@ import java.util.Hashtable;
             // onPostExecute displays the results of the AsyncTask.
             @Override
             protected void onPostExecute(String result) {
-                //Toast.makeText(getApplicationContext(),"Received!", Toast.LENGTH_LONG).show();
                 Log.d("HEROKU",result);
+                if(result.length()>0)
+                    currentSession.setSession(result);
             }
         }
 
