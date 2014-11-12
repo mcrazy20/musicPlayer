@@ -45,7 +45,7 @@ import java.util.Hashtable;
 import java.util.Random;
 import java.util.Stack;
 
-public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener{
+public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener, ShakeListener.OnShakeListener {
     private static String[] mMusicList;
     private FragmentTransaction ft;
     private musicLoaderFragment frag;
@@ -61,6 +61,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     private Stack<Integer> shuffleStack;
     private boolean shuffle = false;
     Random rand = new Random();
+    ShakeListener shaker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,9 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         startService(backgroundService);
         bindService(backgroundService, mConnection, Context.BIND_AUTO_CREATE);
         shuffleStack = new Stack<Integer>();
+        shaker = new ShakeListener(this);
+        shaker.setOnShakeListener(this);
+
 
         //This is used to update the seekbar
         Runnable moveSeekBarThread = new Runnable() {
@@ -349,10 +353,14 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     public void shuffleSongs(View V)
     {
         shuffle = !shuffle;
+        Button shuffleB = (Button) findViewById(R.id.shuffleButton);
         if (shuffle)
         {
-            Button shuffleB = (Button) findViewById(R.id.shuffleButton);
             shuffleB.setBackgroundColor(Color.GREEN);
+        }
+        else
+        {
+            shuffleB.setBackgroundColor(Color.RED);
         }
     }
 
@@ -375,4 +383,9 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         public void onStopTrackingTouch(SeekBar seekBar) {
 
         }
+
+    @Override
+    public void onShake() {
+        shuffleSongs(findViewById(R.id.shuffleButton));
     }
+}
