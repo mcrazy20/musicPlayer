@@ -349,7 +349,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         if (shuffle)
         {
             if (mBound) {
-                int currentSong = rand.nextInt(mMusicList.length);
+                currentSong = rand.nextInt(mMusicList.length);
                 changeAlbumArt(currentSong);
                 changeCurrentSongName(currentSong);
                 try {
@@ -414,7 +414,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         if (shuffle)
         {
             if (mBound) {
-            int currentSong = rand.nextInt(mMusicList.length);
+            currentSong = rand.nextInt(mMusicList.length);
             changeAlbumArt(currentSong);
             changeCurrentSongName(currentSong);
                     try {
@@ -445,7 +445,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    // }
+
                 }
             }
         }
