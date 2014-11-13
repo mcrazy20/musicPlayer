@@ -71,7 +71,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     boolean mBound = false;
     public static Hashtable<String, Song> musicHash;
     public static HashMap<Integer, String> albumHash;
-    public static int currentSong = 0;
+    public static int currentSong = -1;
+    public int lyricsOfSong = -1;
     private boolean paused = false;
     private SeekBar seek;
     private Handler handler;
@@ -128,21 +129,26 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
                     albumArt.setVisibility(ImageView.GONE);
                     fl.setVisibility(FrameLayout.VISIBLE);
                     fragmentTransaction.add(R.id.fragment_placeholder,lyricsFrag).commit();
-                    try{
-                        String[] s = new String[2];
-                        s[0] = lyricsURL+"artist=";
-                        String artist = musicHash.get(mMusicList[currentSong]).getArtist();
-                        s[0] += URLEncoder.encode(artist,"utf-8");
-                        s[0] += "&song=";
-                        String song = mMusicList[currentSong];
-                        s[0] += URLEncoder.encode(song,"utf-8");
-                        s[0] += "&fmt=realjson";
-                        Log.d("URL req",s[0]);
-                        s[1] = "GET";
-                        new HttpAsync().execute(s);
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
+                    if(lyricsOfSong != currentSong){
+                        try{
+                            String[] s = new String[2];
+                            s[0] = lyricsURL+"artist=";
+                            String artist = musicHash.get(mMusicList[currentSong]).getArtist();
+                            s[0] += URLEncoder.encode(artist,"utf-8");
+                            s[0] += "&song=";
+                            String song = mMusicList[currentSong];
+                            s[0] += URLEncoder.encode(song,"utf-8");
+                            s[0] += "&fmt=realjson";
+                            Log.d("URL req",s[0]);
+                            s[1] = "GET";
+                            new HttpAsync().execute(s);
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        finally {
+                            lyricsOfSong = currentSong;
+                        }
                     }
                 }
                 else{
