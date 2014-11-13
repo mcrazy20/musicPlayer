@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -81,6 +82,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     ShakeListener shaker;
     private static CurrentSession currentSession;
     private String serverURL = "https://musicplayerserver.herokuapp.com/";
+    private String lyricsURL = "http://lyrics.wikia.com/api.php?";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +115,44 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         };
 
         playButton = (Button) findViewById(R.id.btn_play);
+        Button lyricsButton = (Button) findViewById(R.id.btn_lyrics);
+
+        lyricsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImageView albumArt= (ImageView) findViewById(R.id.img_albumart);
+                FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_placeholder);
+                LyricsFragment lyricsFrag = new LyricsFragment();
+                android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                if(albumArt.getVisibility() != ImageView.GONE){
+                    albumArt.setVisibility(ImageView.GONE);
+                    fl.setVisibility(FrameLayout.VISIBLE);
+                    fragmentTransaction.add(R.id.fragment_placeholder,lyricsFrag).commit();
+                    try{
+                        String[] s = new String[2];
+                        s[0] = lyricsURL+"artist=";
+                        String artist = musicHash.get(mMusicList[currentSong]).getArtist();
+                        s[0] += URLEncoder.encode(artist,"utf-8");
+                        s[0] += "&song=";
+                        String song = mMusicList[currentSong];
+                        s[0] += URLEncoder.encode(song,"utf-8");
+                        s[0] += "&fmt=realjson";
+                        Log.d("URL req",s[0]);
+                        s[1] = "GET";
+                        new HttpAsync().execute(s);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    albumArt.setVisibility(ImageView.VISIBLE);
+                    fl.setVisibility(FrameLayout.GONE);
+                    fragmentTransaction.hide(lyricsFrag).commit();
+                }
+            }
+        });
+
 
         //This is finding it and running the runnable created earlier
         seek = (SeekBar)findViewById(R.id.mainSeekBar);
@@ -265,7 +305,13 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         name += " - " + artist;
         TextView tv = (TextView) findViewById(R.id.layout_current_song);
         tv.setText(name);
-
+        ImageView albumArt= (ImageView) findViewById(R.id.img_albumart);
+        FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_placeholder);
+        LyricsFragment lyricsFrag = new LyricsFragment();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        albumArt.setVisibility(ImageView.VISIBLE);
+        fl.setVisibility(FrameLayout.GONE);
+        fragmentTransaction.hide(lyricsFrag).commit();
     }
 
     private void changeAlbumArt(int index)
@@ -519,10 +565,12 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
         private class HttpAsync extends AsyncTask<String, Void, String> {
 
+            int flag = 0;
 
             @Override
             protected String doInBackground(String... strings) {
                 if(strings[1]=="GET"){
+                    flag = 1;
                     return GET(strings[0]);
                 }
                 else{
@@ -534,9 +582,29 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             @Override
             protected void onPostExecute(String result) {
                 Log.d("HEROKU",result);
-                if(result.length()>0)
-                    currentSession.setSession(result);
+                if(flag!=1){
+                    if(result.length()>0)
+                        currentSession.setSession(result);
+                }
+                else {
+                    setLyrics(result);
+                }
+                flag = 0;
             }
         }
 
+    private void setLyrics(String result) {
+
+        try{
+            JSONObject lyrics = new JSONObject(result);
+            Log.d("LyricsObject",lyrics.toString());
+            TextView lyricsView = (TextView) findViewById(R.id.txt_lyrics);
+            lyricsView.setText((String)lyrics.get("lyrics"));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
+
+}
