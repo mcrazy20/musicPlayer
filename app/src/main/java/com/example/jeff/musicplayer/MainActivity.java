@@ -84,6 +84,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     private static CurrentSession currentSession;
     private String serverURL = "https://musicplayerserver.herokuapp.com/";
     private String lyricsURL = "http://lyrics.wikia.com/api.php?";
+    private FacebookFragment mainFragment;
+    private String facebookId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,16 +169,24 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         handler.removeCallbacks(moveSeekBarThread);
         handler.postDelayed(moveSeekBarThread, 100);
         currentSession = new CurrentSession();
-        String[] s = new String[8];
-        s[0] = serverURL+"log_user";
-        s[1] = "POST";
-        s[2] = "facebook_id";
-        s[3] = "1234";
-        s[4] = "name";
-        s[5] = "Roka";
-        s[6] = "email";
-        s[7] = "test@test.com";
-        new HttpAsync().execute(s);
+//        String[] s = new String[8];
+//        s[0] = serverURL+"log_user";
+//        s[1] = "POST";
+//        s[2] = "facebook_id";
+//        s[3] = "1234";
+//        s[4] = "name";
+//        s[5] = "Roka";
+//        s[6] = "email";
+//        s[7] = "test@test.com";
+//        new HttpAsync().execute(s);
+        if (savedInstanceState == null) {
+            // Add the fragment on initial activity setup
+            mainFragment = new FacebookFragment();
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content, mainFragment).addToBackStack("FB").commit();
+        } else {
+            // Or set the fragment from restored state info
+            mainFragment = (FacebookFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+        }
         Log.d("MAIN", "ON CREATE");
     }
 
@@ -201,7 +211,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         s[4] = "artists";
         s[5] = artistObject.toString();
         s[6] = "facebook_id";
-        s[7] = "1234";
+        s[7] = facebookId;
         Log.d("artistDATA",s[5]);
         new HttpAsync().execute(s);                                 //Updating the Heroku Server
     }
@@ -242,6 +252,10 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.facebook_logout) {
+            showFBFrag();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -569,7 +583,30 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
         }
 
-        private class HttpAsync extends AsyncTask<String, Void, String> {
+    public void getSessionFromServer(String fbID, String fbName, String fbemail) {
+
+        facebookId = fbID;
+
+        String[] s = new String[8];
+        s[0] = serverURL+"log_user";
+        s[1] = "POST";
+        s[2] = "facebook_id";
+        s[3] = fbID;
+        s[4] = "name";
+        s[5] = fbName;
+        s[6] = "email";
+        s[7] = fbemail;
+        new HttpAsync().execute(s);
+
+    }
+
+    public void clearFBId() {
+
+        facebookId = "";
+
+    }
+
+    private class HttpAsync extends AsyncTask<String, Void, String> {
 
             int flag = 0;
 
@@ -613,4 +650,13 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
     }
 
+    public void hideFBFrag(){
+        Log.d("MainActivity", "Hidiiiing");
+        getSupportFragmentManager().beginTransaction().hide(mainFragment).commit();
+    }
+
+    public void showFBFrag(){
+        Log.d("MainActivity","Showing");
+        getSupportFragmentManager().beginTransaction().show(mainFragment).commit();
+    }
 }
