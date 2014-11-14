@@ -68,6 +68,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     private static String[] mMusicList;
     private FragmentTransaction ft;
     private musicLoaderFragment frag;
+    private ProfileDisplayFragment profileFrag;
     public static MusicService mService;
     boolean mBound = false;
     public static Hashtable<String, Song> musicHash;
@@ -95,6 +96,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         frag = new musicLoaderFragment();
+        profileFrag = new ProfileDisplayFragment();
         Intent backgroundService = new Intent(this, MusicService.class);
         startService(backgroundService);
         bindService(backgroundService, mConnection, Context.BIND_AUTO_CREATE);
@@ -303,10 +305,25 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         ft.add(R.id.fragment_musicloader, frag, "MusicList").addToBackStack("MusicList").commit();
     }
 
+    public void moveToSessionData(View V)
+    {
+        Log.d("Fragment", "Inside Fragment");
+        FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_profiledisplay);
+        fl.setVisibility(FrameLayout.VISIBLE);
+        Log.d("Fragment", "Should be visible");
+        ft = getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        ft.add(R.id.fragment_profiledisplay, profileFrag, "Profile").addToBackStack("Profile").commit();
+    }
+
     //This is called inside the fragment to make sure our fragment disappears when the user is done
     public void hideTheFrag(){
         getFragmentManager().popBackStack();
         FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
+        fl.setVisibility(FrameLayout.GONE);
+    }
+    public void hideProfileFrag(){
+        getFragmentManager().popBackStack();
+        FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_profiledisplay);
         fl.setVisibility(FrameLayout.GONE);
     }
 

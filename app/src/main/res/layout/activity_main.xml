@@ -16,6 +16,12 @@
         android:visibility="gone"
         android:id="@+id/fragment_musicloader">
     </FrameLayout>
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"
+        android:id="@+id/fragment_profiledisplay">
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Lyrics"
-        android:id="@+id/btn_lyrics" />
+        android:id="@+id/btn_lyrics"
+        android:layout_weight="1"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -37,7 +44,15 @@
         android:padding="10dp"
         android:layout_height="wrap_content"
         android:id="@+id/main_button"
-        android:onClick="moveToMusic"/>
+        android:onClick="moveToMusic"
+        android:layout_weight="1"/>
+        <Button
+            android:id="@+id/profiledisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="moveToSessionData"
+            android:text="Profile Data"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 
@@ -83,6 +98,7 @@
             android:layout_height="wrap_content"
             android:text="Previous"
             android:onClick="previousSong"
+            android:layout_weight="1"
             />
         <Button
             android:id="@+id/btn_play"
@@ -90,6 +106,7 @@
             android:layout_height="wrap_content"
             android:text="Play"
             android:onClick="playSong"
+            android:layout_weight="1"
             />
         <Button
             android:id="@+id/btn_next"
@@ -97,6 +114,7 @@
             android:layout_height="wrap_content"
             android:text="Next"
             android:onClick="nextSong"
+            android:layout_weight="1"
             />
         </LinearLayout>
     <LinearLayout
