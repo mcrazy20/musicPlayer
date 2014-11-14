@@ -4,11 +4,21 @@
     tools:context=".MainActivity" >
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="102"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_lyrics"
+        android:title="Lyrics"
+        android:orderInCategory="102"
         app:showAsAction="never" />
 
     <item android:id="@+id/facebook_logout"
-        android:title="Logout"
+        android:title="Home"
         android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_exit"
+        android:title="Exit"
+        android:orderInCategory="103"
         app:showAsAction="never" />
 </menu>

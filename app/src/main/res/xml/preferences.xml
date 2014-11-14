@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Home Screen">
+
+    <CheckBoxPreference
+        android:key="pref_skip"
+        android:title="Skip Home"
+        android:summary="If checked the user will be directed to Music app directly even if the user is not logged in with facebook"
+        android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Shake Settings">
+
+    <ListPreference
+        android:key="pref_shake"
+        android:title="Shake Preference"
+        android:dialogTitle="Please select one"
+        android:entries="@array/opts"
+        android:entryValues="@array/opts_values"
+        android:defaultValue="Shuffle"
+        android:summary="%s"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

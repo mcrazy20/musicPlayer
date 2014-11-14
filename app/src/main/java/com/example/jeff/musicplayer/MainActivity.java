@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
@@ -86,6 +87,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     private String lyricsURL = "http://lyrics.wikia.com/api.php?";
     private FacebookFragment mainFragment;
     private String facebookId = "";
+    public Boolean inSettings = false;
+    private Button lyric;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +101,9 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         shuffleStack = new Stack<Integer>();
         shaker = new ShakeListener(this);
         shaker.setOnShakeListener(this);
+        lyric = (Button) findViewById(R.id.btn_lyrics);
 
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         //This is used to update the seekbar
         Runnable moveSeekBarThread = new Runnable() {
@@ -169,16 +174,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         handler.removeCallbacks(moveSeekBarThread);
         handler.postDelayed(moveSeekBarThread, 100);
         currentSession = new CurrentSession();
-//        String[] s = new String[8];
-//        s[0] = serverURL+"log_user";
-//        s[1] = "POST";
-//        s[2] = "facebook_id";
-//        s[3] = "1234";
-//        s[4] = "name";
-//        s[5] = "Roka";
-//        s[6] = "email";
-//        s[7] = "test@test.com";
-//        new HttpAsync().execute(s);
+
         if (savedInstanceState == null) {
             // Add the fragment on initial activity setup
             mainFragment = new FacebookFragment();
@@ -187,12 +183,21 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             // Or set the fragment from restored state info
             mainFragment = (FacebookFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
         }
+
         Log.d("MAIN", "ON CREATE");
     }
 
     protected void onResume()
     {
         super.onResume();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean fbSkip = sharedPreferences.getBoolean("pref_skip",false);
+
+        if(fbSkip){
+            hideFBFrag();
+        }
+
         Log.d("MAIN", "ON RESUME");
     }
 
@@ -220,6 +225,16 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     protected void onStop() {
         super.onStop();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(inSettings){
+            inSettings = false;
+            getFragmentManager().popBackStack();
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -252,13 +267,29 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            inSettings = true;
+            showSettingsFrag();
             return true;
         }
-        if (id == R.id.facebook_logout) {
+        else if (id == R.id.facebook_logout) {
             showFBFrag();
             return true;
         }
+        else if (id == R.id.action_lyrics) {
+            lyric.performClick();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSettingsFrag() {
+
+        //setContentView(R.layout.clear);
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
+                .addToBackStack("Settings")
+                .commit();
+
     }
 
     //This code is used to open our musicLoaderFragment
@@ -500,7 +531,16 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onShake() {
-        shuffleSongs(findViewById(R.id.shuffleButton));
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String pref = sharedPreferences.getString("pref_shake","Shuffle");
+        if(pref.equals("Shuffle")){
+            shuffleSongs(findViewById(R.id.shuffleButton));
+        }
+        else{
+            lyric.performClick();
+        }
+
     }
 
         public static String POST(String... strings){
@@ -606,6 +646,10 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
     }
 
+    public void hideFbFrag(View view) {
+        hideFBFrag();
+    }
+
     private class HttpAsync extends AsyncTask<String, Void, String> {
 
             int flag = 0;
@@ -653,10 +697,14 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     public void hideFBFrag(){
         Log.d("MainActivity", "Hidiiiing");
         getSupportFragmentManager().beginTransaction().hide(mainFragment).commit();
+        //getSupportFragmentManager().popBackStack();
     }
 
     public void showFBFrag(){
         Log.d("MainActivity","Showing");
         getSupportFragmentManager().beginTransaction().show(mainFragment).commit();
+        //getSupportFragmentManager().beginTransaction().add(android.R.id.content, mainFragment).addToBackStack("FB").commit();
     }
+
+
 }

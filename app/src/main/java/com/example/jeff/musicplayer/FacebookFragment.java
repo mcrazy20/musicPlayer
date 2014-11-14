@@ -1,5 +1,7 @@
 package com.example.jeff.musicplayer;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.facebook.Request;
@@ -56,12 +60,24 @@ public class FacebookFragment extends Fragment {
         LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
         authButton.setFragment(this);
         authButton.setReadPermissions(Arrays.asList("user_location", "user_birthday", "user_likes", "email"));
-        //userInfoTextView = (TextView) view.findViewById(R.id.userInfoTextView);
-        //profilePictureView = (ProfilePictureView) view.findViewById(R.id.selection_profile_pic);
-        //profilePictureView.setCropped(true);
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.skip_home);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                if (isChecked){
+                    Log.d("CheckBox","isChecked");
+                    sharedPreferences.edit().putBoolean("pref_skip",true).apply();
+                }
+                else{
+                    Log.d("CheckBox","isUNChecked");
+                    sharedPreferences.edit().putBoolean("pref_skip",false).apply();
+                }
+            }
+        });
         return view;
-
     }
+
 
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
