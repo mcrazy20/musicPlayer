@@ -1,14 +1,18 @@
 package com.example.jeff.musicplayer;
 
 import android.app.Fragment;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
@@ -70,7 +74,27 @@ public class ProfileDisplayFragment extends Fragment {
         list1.addHeaderView(header2);
         list2.addHeaderView(header1);
         list1.setAdapter(songAdapter);
+        list1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getActivity(), "COMING SOON!", Toast.LENGTH_LONG).show();
+
+            }
+        });
         list2.setAdapter(artistAdapter);
+        list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //String url = "https://musicbrainz.org/search?query=";
+                TextView text = (TextView)view.findViewById(R.id.dataTitle);
+                String url="http://www.lyrics.wikia.com/";
+                url+=text.getText();
+                //url+="&type=artist&method=indexed";
+                Uri uri = Uri.parse(url);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 
