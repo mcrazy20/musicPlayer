@@ -18,8 +18,8 @@ import java.util.Map;
  */
 public class CurrentSession {
 
-    private HashMap<String, Integer> songsPlayed = new HashMap<String, Integer>();
-    private HashMap<String, Integer> artistPlayed = new HashMap<String, Integer>();
+    public static HashMap<String, Integer> songsPlayed = new HashMap<String, Integer>();
+    public static HashMap<String, Integer> artistPlayed = new HashMap<String, Integer>();
 
     public void updateSongCount(String song, int count){
 
