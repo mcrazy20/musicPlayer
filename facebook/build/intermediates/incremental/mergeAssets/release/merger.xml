@@ -2,10 +2,10 @@
 <merger version="2" >
 
     <dataSet config="main" >
-        <source path="C:\Users\J\AndroidStudioProjects\musicPlayer\facebook\src\main\assets" />
+        <source path="/Users/Rohit/Documents/Android/musicPlayer/facebook/src/main/assets" />
     </dataSet>
     <dataSet config="release" >
-        <source path="C:\Users\J\AndroidStudioProjects\musicPlayer\facebook\src\release\assets" />
+        <source path="/Users/Rohit/Documents/Android/musicPlayer/facebook/src/release/assets" />
     </dataSet>
 
 </merger>

@@ -1,5 +1,6 @@
 package com.example.jeff.musicplayer;
 
+import android.annotation.TargetApi;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -17,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -362,10 +364,11 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         }
     };
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     protected void changeCurrentSongName(int index){
-        if(mService.isMusicPlaying()){
-            playButton.setText("Pause");
-        }
+        //if(mService.isMusicPlaying()){
+            playButton.setBackground(getResources().getDrawable(R.drawable.pause));
+        //}
         String name = mMusicList[index];
         currentSession.updateSongCount(name,1);
         String artist = musicHash.get(mMusicList[index]).getArtist();
@@ -449,7 +452,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             if (!mService.isMusicPlaying()) {
                 if (paused)
                 {
-                    playButton.setText("Pause");
+                    playButton.setBackground(getResources().getDrawable(R.drawable.pause));
                     mService.resumeMusic();
                 }
                 else {
@@ -464,7 +467,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             }
             else
             {
-                playButton.setText("Play");
+                playButton.setBackground(getResources().getDrawable(R.drawable.play));
                 mService.pauseMusic();
                 paused=true;
             }
