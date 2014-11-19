@@ -203,8 +203,9 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         String songName = share.getString("songName", null);
         String albumPath = share.getString("albumPath", null);
         TextView tv = (TextView) findViewById(R.id.layout_current_song);
-        tv.setText(songName);
-
+        if (songName != null) {
+            tv.setText(songName);
+        }
         ImageView img = (ImageView)findViewById(R.id.img_albumart);
         // Log.d("CHANGEALBUMART", albumPath);
         if (albumPath!= null) {
