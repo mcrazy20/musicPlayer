@@ -439,36 +439,36 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     public void previousSong(View V)
     {
         //updateTables();
-        if (shuffle)
-        {
-            if (mBound) {
-                currentSong = rand.nextInt(mMusicList.length);
-                changeAlbumArt(currentSong);
-                changeCurrentSongName(currentSong);
-                try {
-                    if (!(musicHash == null || mMusicList == null)) {
-                        mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                shuffleStack.push(currentSong);
-            }
-
-        }
-        else {
-            currentSong--;
-            if (currentSong < 0) {
-                currentSong = mMusicList.length - 1;
-            }
-            changeAlbumArt(currentSong);
-            changeCurrentSongName(currentSong);
-            if (mBound) {
-                if (mService.isMusicPlaying()) {
+        if (mMusicList != null) {
+            if (shuffle) {
+                if (mBound) {
+                    currentSong = rand.nextInt(mMusicList.length);
+                    changeAlbumArt(currentSong);
+                    changeCurrentSongName(currentSong);
                     try {
-                        mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                        if (!(musicHash == null || mMusicList == null)) {
+                            mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
+                    }
+                    shuffleStack.push(currentSong);
+                }
+
+            } else {
+                currentSong--;
+                if (currentSong < 0) {
+                    currentSong = mMusicList.length - 1;
+                }
+                changeAlbumArt(currentSong);
+                changeCurrentSongName(currentSong);
+                if (mBound) {
+                    if (mService.isMusicPlaying()) {
+                        try {
+                            mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -504,33 +504,12 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     public void nextSong(View V)
     {
         //updateTables();
-        if (shuffle)
-        {
-            if (mBound) {
-            currentSong = rand.nextInt(mMusicList.length);
-            changeAlbumArt(currentSong);
-            changeCurrentSongName(currentSong);
-                    try {
-                        if (!(musicHash == null || mMusicList == null)) {
-                            mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                shuffleStack.push(currentSong);
-            }
-
-        }
-        else {
-            if (mBound) {
-                currentSong++;
-                if (currentSong == mMusicList.length) {
-                    currentSong = 0;
-                }
-                changeCurrentSongName(currentSong);
-                changeAlbumArt(currentSong);
+        if (mMusicList != null) {
+            if (shuffle) {
                 if (mBound) {
-                    //if (mService.isMusicPlaying()) {
+                    currentSong = rand.nextInt(mMusicList.length);
+                    changeAlbumArt(currentSong);
+                    changeCurrentSongName(currentSong);
                     try {
                         if (!(musicHash == null || mMusicList == null)) {
                             mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
@@ -538,7 +517,28 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    shuffleStack.push(currentSong);
+                }
 
+            } else {
+                if (mBound) {
+                    currentSong++;
+                    if (currentSong == mMusicList.length) {
+                        currentSong = 0;
+                    }
+                    changeCurrentSongName(currentSong);
+                    changeAlbumArt(currentSong);
+                    if (mBound) {
+                        //if (mService.isMusicPlaying()) {
+                        try {
+                            if (!(musicHash == null || mMusicList == null)) {
+                                mService.setPathOfSong(musicHash.get(mMusicList[currentSong]).getPath());
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
                 }
             }
         }
