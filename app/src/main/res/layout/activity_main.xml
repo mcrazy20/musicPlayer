@@ -2,13 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     android:gravity="center|top"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".MyActivity">
+    tools:context=".MyActivity"
+    >
 
     <FrameLayout
         android:layout_width="fill_parent"
@@ -32,27 +29,27 @@
         android:layout_marginBottom="20dp">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lyrics"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:id="@+id/btn_lyrics"
-        android:layout_weight="1"/>
+        android:background="@drawable/lyrics"
+        />
 
     <Button
-        android:layout_width="wrap_content"
-        android:text="Get Music"
+        android:layout_width="50dp"
         android:padding="10dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:id="@+id/main_button"
         android:onClick="moveToMusic"
-        android:layout_weight="1"/>
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:background="@drawable/musical"/>
         <Button
             android:id="@+id/profiledisplay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:onClick="moveToSessionData"
-            android:text="Profile Data"
-            android:layout_weight="1"/>
+            android:background="@drawable/profile"/>
 
     </LinearLayout>
 
@@ -97,33 +94,36 @@
             android:layout_width="71dp"
             android:layout_height="70dp"
             android:onClick="previousSong"
-            android:background="@drawable/previous" />
+            android:background="@drawable/previous"
+            android:layout_marginRight="15dp"/>
         <Button
             android:id="@+id/btn_play"
             android:layout_width="71dp"
             android:layout_height="70dp"
             android:onClick="playSong"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
             android:background="@drawable/play"
             android:layout_weight="0.07" />
+
+        <Button
+            android:id="@+id/shuffleButton"
+            android:layout_width="101dp"
+            android:layout_height="100dp"
+            android:onClick="shuffleSongs"
+            android:background="@drawable/shuffle"
+            />
+
         <Button
             android:id="@+id/btn_next"
             android:layout_width="71dp"
             android:layout_height="70dp"
             android:onClick="nextSong"
-            android:background="@drawable/next" />
+            android:background="@drawable/next"
+            />
         </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <Button
-            android:id="@+id/shuffleButton"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Shuffle"
-            android:onClick="shuffleSongs"/>
-        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

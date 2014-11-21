@@ -106,7 +106,6 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         shaker = new ShakeListener(this);
         shaker.setOnShakeListener(this);
         lyric = (Button) findViewById(R.id.btn_lyrics);
-        findViewById(R.id.shuffleButton).setBackgroundColor(Color.RED);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
@@ -553,11 +552,11 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         Button shuffleB = (Button) findViewById(R.id.shuffleButton);
         if (shuffle)
         {
-            shuffleB.setBackgroundColor(Color.GREEN);
+            shuffleB.setBackgroundResource(R.drawable.shuffleon);
         }
         else
         {
-            shuffleB.setBackgroundColor(Color.RED);
+            shuffleB.setBackgroundResource(R.drawable.shuffle);
         }
     }
 
