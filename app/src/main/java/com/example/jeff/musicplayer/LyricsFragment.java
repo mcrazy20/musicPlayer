@@ -11,6 +11,9 @@ import android.widget.TextView;
 /**
  * Created by Rohit on 11/12/14.
  */
+
+//This class is used to inflate the lyrics fragment
+//Most of the work for this fragment is done in MainActivity
 public class LyricsFragment extends Fragment{
 
     @Override

@@ -21,6 +21,7 @@ public class CurrentSession {
     public static HashMap<String, Integer> songsPlayed = new HashMap<String, Integer>();
     public static HashMap<String, Integer> artistPlayed = new HashMap<String, Integer>();
 
+    //Keeping track of the total number of songs played
     public void updateSongCount(String song, int count){
 
         if(songsPlayed.containsKey(song)){
@@ -31,6 +32,7 @@ public class CurrentSession {
 
     }
 
+    //Keeping track of the number of artists
     public void updateArtistCount(String artist, int count){
 
         if(artistPlayed.containsKey(artist)){
@@ -40,7 +42,7 @@ public class CurrentSession {
         artistPlayed.put(artist,count);
 
     }
-
+    //Creating a JSONObject to send the song data online
     public JSONObject getSongs(){
 
         songsPlayed = sortByValues(songsPlayed);
@@ -59,7 +61,7 @@ public class CurrentSession {
         }
         return obj;
     }
-
+    //Creating the JSONObject to send the artist information online
     public JSONObject getArtists(){
 
         Log.d("Before","Sort");
@@ -89,6 +91,7 @@ public class CurrentSession {
         return obj;
     }
 
+    //This is used to order the lists
     private  HashMap sortByValues(HashMap map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
@@ -109,6 +112,7 @@ public class CurrentSession {
         return sortedHashMap;
     }
 
+    //Creates a session for data purposes
     public void setSession(String result) {
 
         Log.d("CurrentSession","INSIDE");

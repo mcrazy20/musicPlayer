@@ -97,11 +97,17 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Setting up the fragments
         frag = new musicLoaderFragment();
         profileFrag = new ProfileDisplayFragment();
+
+        //Starting the Music Players
         Intent backgroundService = new Intent(this, MusicService.class);
         startService(backgroundService);
         bindService(backgroundService, mConnection, Context.BIND_AUTO_CREATE);
+
+        //Setting up Shuffle and Shake methods
         shuffleStack = new Stack<Integer>();
         shaker = new ShakeListener(this);
         shaker.setOnShakeListener(this);
@@ -129,6 +135,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         playButton = (Button) findViewById(R.id.btn_play);
         Button lyricsButton = (Button) findViewById(R.id.btn_lyrics);
 
+
+        //This creates our lyrics view
         lyricsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,7 +179,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         });
 
 
-        //This is finding it and running the runnable created earlier
+        //This is finding the seek bar and running the runnable created earlier
         seek = (SeekBar)findViewById(R.id.mainSeekBar);
         seek.setOnSeekBarChangeListener(this);
         handler = new Handler();
@@ -179,6 +187,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         handler.postDelayed(moveSeekBarThread, 100);
         currentSession = new CurrentSession();
 
+
+        //Some required Facebook code
         if (savedInstanceState == null) {
             // Add the fragment on initial activity setup
             mainFragment = new FacebookFragment();
@@ -191,10 +201,12 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         Log.d("MAIN", "ON CREATE");
     }
 
+    /*On resume takes care of a lot of variables floating around during run time.
+    It gets information saved during on pause and sets the app up to make it look just like it did before it was paused
+     */
     protected void onResume()
     {
         super.onResume();
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean fbSkip = sharedPreferences.getBoolean("pref_skip",false);
         if(fbSkip){
@@ -221,7 +233,9 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
         Log.d("MAIN", "ON RESUME");
     }
-
+    /*
+    onPause sends the current profile information up to our server and then saves some local variables for when the app is reopened
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -259,15 +273,11 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onBackPressed() {
-
+        //This is used to kill fragments in a nice way.
         if(inSettings){
            inSettings = false;
            getFragmentManager().popBackStack();
         }
-        //Log.d("ON BACK PRESSED", getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName());
-        /*
-        hideTheFrag();
-        hideProfileFrag();*/
         super.onBackPressed();
     }
 
@@ -318,7 +328,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
     private void showSettingsFrag() {
 
-        //setContentView(R.layout.clear);
+        //This is used to show our settings menu
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .addToBackStack("Settings")
@@ -337,6 +347,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         ft.add(R.id.fragment_musicloader, frag, "MusicList").addToBackStack("MusicList").commit();
     }
 
+    //This function shows the profile information fragment
     public void moveToSessionData(View V)
     {
         Log.d("Fragment", "Inside Fragment");
@@ -394,11 +405,11 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         }
     };
 
+    //This function is used to update the SongName inside the app UI
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     protected String changeCurrentSongName(int index){
-        //if(mService.isMusicPlaying()){
-            playButton.setBackground(getResources().getDrawable(R.drawable.pause));
-        //}
+        playButton.setBackground(getResources().getDrawable(R.drawable.pause));
         String name = "";
         if (mMusicList != null) {
             name = mMusicList[index];
@@ -420,6 +431,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
     }
 
+    //This updates the album art inside of the UI
     private String changeAlbumArt(int index)
     {
         String albumPath = "";
@@ -443,13 +455,15 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         changeCurrentSongName(index);
         mService.setPathOfSong(musicHash.get(mMusicList[index]).getPath());
     }
-
+    //This moves to the previous song
     public void previousSong(View V)
     {
-        //updateTables();
+        //All of these if statements are used to make sure all the information the app needs is available
         if (mMusicList != null) {
             if (shuffle) {
                 if (mBound) {
+
+                    //Changing the song/album art
                     currentSong = rand.nextInt(mMusicList.length);
                     changeAlbumArt(currentSong);
                     changeCurrentSongName(currentSong);
@@ -482,6 +496,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             }
         }
     }
+
+    //This function is used by the play button
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void playSong(View V)
     {
@@ -510,9 +526,10 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             }
         }
     }
+
+    //This function skips to the next song
     public void nextSong(View V)
     {
-        //updateTables();
         if (mMusicList != null) {
             if (shuffle) {
                 if (mBound) {
@@ -552,6 +569,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             }
         }
     }
+
+    //This turns shuffle on/off
     public void shuffleSongs(View V)
     {
         shuffle = !shuffle;
@@ -565,7 +584,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             shuffleB.setBackgroundResource(R.drawable.shuffle);
         }
     }
-
+        //Used by the seekbar to update often
         @Override
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
             if (b)
@@ -587,6 +606,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         }
 
     @Override
+    //Used by the shake listener
     public void onShake() {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -679,7 +699,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             return result;
 
         }
-
+    //Used by facebook for sessions
     public void getSessionFromServer(String fbID, String fbName, String fbemail) {
 
         facebookId = fbID;
@@ -736,7 +756,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
                 flag = 0;
             }
         }
-
+    //This function updates the lyrics inside of the fragment
     private void setLyrics(String result) {
 
         try{
@@ -754,13 +774,11 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
     public void hideFBFrag(){
         Log.d("MainActivity", "Hidiiiing");
         getSupportFragmentManager().beginTransaction().hide(mainFragment).commit();
-        //getSupportFragmentManager().popBackStack();
     }
 
     public void showFBFrag(){
         Log.d("MainActivity","Showing");
         getSupportFragmentManager().beginTransaction().show(mainFragment).commit();
-        //getSupportFragmentManager().beginTransaction().add(android.R.id.content, mainFragment).addToBackStack("FB").commit();
     }
 
 
