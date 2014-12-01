@@ -23,6 +23,8 @@ import java.util.Set;
 /**
  * Created by J on 11/12/2014.
  */
+
+//This fragment displays stored data about songs most played and artists
 public class ProfileDisplayFragment extends Fragment {
     private View view;
     private ProfileDataItem[] songList;
@@ -41,6 +43,8 @@ public class ProfileDisplayFragment extends Fragment {
                 ((MainActivity)getActivity()).hideProfileFrag();
             }
         });
+
+        //Getting information from phone
         songsPlayed = CurrentSession.songsPlayed;
         artistPlayed = CurrentSession.artistPlayed;
         Object[] songNames = songsPlayed.keySet().toArray();
@@ -54,6 +58,8 @@ public class ProfileDisplayFragment extends Fragment {
         TextView header2= new TextView(view.getContext());
         header2.setText("Songs");
         header2.setTextSize(40);
+
+        //Creating objects for the adapter
         for (int i=0; i < songNames.length; i++)
         {
             ProfileDataItem it = new ProfileDataItem((String)songNames[i], songsPlayed.get((String)songNames[i]).toString());
@@ -65,7 +71,7 @@ public class ProfileDisplayFragment extends Fragment {
             ProfileDataItem it = new ProfileDataItem((String)artistNames[i], "" + artistPlayed.get((String)artistNames[i]).toString());
             artistList[i] = it;
         }
-
+        //These create adapters so we can store the information in list views
         ProfileAdapter songAdapter = new ProfileAdapter((MainActivity)getActivity(), R.layout.profile_list_item, songList);
         ProfileAdapter artistAdapter = new ProfileAdapter((MainActivity)getActivity(), R.layout.profile_list_item, artistList);
 
@@ -81,6 +87,8 @@ public class ProfileDisplayFragment extends Fragment {
 
             }
         });
+
+        //This creates the final listview and adds the ability to search for the song on the web
         list2.setAdapter(artistAdapter);
         list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

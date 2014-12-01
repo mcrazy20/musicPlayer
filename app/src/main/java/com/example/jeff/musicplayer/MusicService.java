@@ -17,6 +17,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     //private static final String TAG = ((Object)this).getClass().getSimpleName();
     private static String TAG = "MusicService";
     private final IBinder binder = new MyBinder();
+    //This is used to bind the service to main activity, so we can send it commands, like play the next song
     public class MyBinder extends Binder{
         MusicService getService()
         {
@@ -47,28 +48,21 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public int onStartCommand(Intent i, int q, int r)
     {
         Log.d(TAG, "In on start");
-       /* mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                Intent intent = new Intent("song-finished");
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-            }
-        });*/
         mMediaPlayer.setOnPreparedListener(this);
         return 0;
     }
 
     public static void setPathOfSong(String path) throws IOException {
 
+        //This code prepares our music service
         pathOfSong=path;
         mMediaPlayer.reset();
         mMediaPlayer.setDataSource(path);
         Log.d(TAG,"Starting new song");
         mMediaPlayer.prepareAsync();
-        //mMediaPlayer.start();
 
     }
-
+    //This function pauses the music if it's playing
     public static void pauseMusic()
     {
         if (mMediaPlayer.isPlaying())
@@ -76,6 +70,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             mMediaPlayer.pause();
         }
     }
+
+    //Resumes the music if it is paused
     public static void resumeMusic()
     {
         if (!mMediaPlayer.isPlaying())
@@ -84,26 +80,31 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
     }
 
+    //Get the length of the song
     public static int getMDuration()
     {
         return mMediaPlayer.getDuration();
     }
 
+    //Get the current position of the song
     public static int getMCurrentPosition()
     {
         return mMediaPlayer.getCurrentPosition();
     }
 
+    //Used by seekbar
     public static void changeMPosition(int i)
     {
         mMediaPlayer.seekTo(i);
     }
 
+    //Checking if a song is playing
     public static boolean isMusicPlaying()
     {
         return mMediaPlayer.isPlaying();
     }
 
+    //Returning the mediaPlayer
     public static MediaPlayer getmMediaPlayer()
     {
         return mMediaPlayer;

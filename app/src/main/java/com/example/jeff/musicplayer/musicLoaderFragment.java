@@ -76,7 +76,7 @@ public class musicLoaderFragment extends Fragment {
         Log.d(TAG, "ON STOP");
     }
 
-
+    //This class is used to get the music stored within the phone
     class async extends AsyncTask<Void, Void, String[]>
     {
         private String[] mMusicList;
@@ -114,7 +114,10 @@ public class musicLoaderFragment extends Fragment {
             MainActivity.updateTables();
         }
 
+        //This function reads the data within MediaStore and stores it in a cursor for our listview to use
         public String[] getMusic() {
+
+            //Querying MediaStore
             final Cursor mCursor = view.getContext().getContentResolver().query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     new String[]{MediaStore.Audio.Media.DISPLAY_NAME,MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,MediaStore.Audio.Media.ALBUM_ID,MediaStore.Audio.Media.DATA}, null, null,
@@ -128,6 +131,7 @@ public class musicLoaderFragment extends Fragment {
 
             String[] songs = new String[count];
             int i = 0;
+            //Creating a hash table for music
             if (mCursor.moveToFirst()) {
                 do {
                     String artist;
@@ -153,6 +157,7 @@ public class musicLoaderFragment extends Fragment {
             }
 
             mCursor.close();
+            //Creating the hash table for the album art
             if (albumCursor.moveToFirst())
             {
                 int albumId = 0;

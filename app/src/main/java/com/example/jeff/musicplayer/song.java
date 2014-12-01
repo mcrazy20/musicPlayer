@@ -3,6 +3,7 @@ package com.example.jeff.musicplayer;
 /**
  * Created by J on 10/15/2014.
  */
+//These objects are used by our hashtables to increase efficiency
 public class Song {
     private String artist;
     private String path;

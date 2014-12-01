@@ -10,6 +10,8 @@ import android.hardware.SensorManager;
 import android.content.Context;
 import java.lang.UnsupportedOperationException;
 
+
+//This class is used to detect phone shakes
 public class ShakeListener implements SensorListener
 {
     private static final int FORCE_THRESHOLD = 500;
@@ -43,6 +45,7 @@ public class ShakeListener implements SensorListener
         mShakeListener = listener;
     }
 
+    //Getting some sensor data here
     public void resume() {
         mSensorMgr = (SensorManager)mContext.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorMgr == null) {
@@ -55,6 +58,7 @@ public class ShakeListener implements SensorListener
         }
     }
 
+
     public void pause() {
         if (mSensorMgr != null) {
             mSensorMgr.unregisterListener(this, SensorManager.SENSOR_ACCELEROMETER);
@@ -64,6 +68,7 @@ public class ShakeListener implements SensorListener
 
     public void onAccuracyChanged(int sensor, int accuracy) { }
 
+    //This is called when the phone detects movement, will call onShake when the movement is large enough
     public void onSensorChanged(int sensor, float[] values)
     {
         if (sensor != SensorManager.SENSOR_ACCELEROMETER) return;

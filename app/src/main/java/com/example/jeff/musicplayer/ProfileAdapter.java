@@ -12,6 +12,8 @@ import android.widget.TextView;
 /**
  * Created by J on 11/12/2014.
  */
+
+//This code is used by our profile display, so that it can display our artist/song information
 public class ProfileAdapter extends ArrayAdapter<ProfileDataItem> {
     Context context;
     int layoutResourceId;
@@ -24,6 +26,7 @@ public class ProfileAdapter extends ArrayAdapter<ProfileDataItem> {
         this.data = data;
     }
     @Override
+    //Used to create the views in each spot in the list
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         WeatherHolder holder = null;
