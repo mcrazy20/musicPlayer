@@ -245,9 +245,10 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         if (currentSong >= 0) {
             String songName = changeCurrentSongName(currentSong);
             String albumPath = changeAlbumArt(currentSong);
+            share.edit().putString("songName", songName).apply();
+            share.edit().putString("albumPath", albumPath).apply();
         }
-        share.edit().putString("songName", songName).apply();
-        share.edit().putString("albumPath", albumPath).apply();
+
     }
 
     @Override
