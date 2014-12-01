@@ -242,10 +242,10 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         new HttpAsync().execute(s);                                 //Updating the Heroku Server
 
         SharedPreferences share = this.getSharedPreferences("com.example.app", Context.MODE_PRIVATE);
-
-        String songName = changeCurrentSongName(currentSong);
-        String albumPath = changeAlbumArt(currentSong);
-
+        if (currentSong >= 0) {
+            String songName = changeCurrentSongName(currentSong);
+            String albumPath = changeAlbumArt(currentSong);
+        }
         share.edit().putString("songName", songName).apply();
         share.edit().putString("albumPath", albumPath).apply();
     }
@@ -398,37 +398,42 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         //if(mService.isMusicPlaying()){
             playButton.setBackground(getResources().getDrawable(R.drawable.pause));
         //}
-        String name = mMusicList[index];
-        currentSession.updateSongCount(name,1);
-        String artist = musicHash.get(mMusicList[index]).getArtist();
-        currentSession.updateArtistCount(artist,1);
-        name += " - " + artist;
-        TextView tv = (TextView) findViewById(R.id.layout_current_song);
-        tv.setText(name);
-        ImageView albumArt= (ImageView) findViewById(R.id.img_albumart);
-        FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_placeholder);
-        LyricsFragment lyricsFrag = new LyricsFragment();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        albumArt.setVisibility(ImageView.VISIBLE);
-        fl.setVisibility(FrameLayout.GONE);
-        fragmentTransaction.hide(lyricsFrag).commit();
+        String name = "";
+        if (mMusicList != null) {
+            name = mMusicList[index];
+            currentSession.updateSongCount(name, 1);
+            String artist = musicHash.get(mMusicList[index]).getArtist();
+            currentSession.updateArtistCount(artist, 1);
+            name += " - " + artist;
+            TextView tv = (TextView) findViewById(R.id.layout_current_song);
+            tv.setText(name);
+            ImageView albumArt = (ImageView) findViewById(R.id.img_albumart);
+            FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_placeholder);
+            LyricsFragment lyricsFrag = new LyricsFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            albumArt.setVisibility(ImageView.VISIBLE);
+            fl.setVisibility(FrameLayout.GONE);
+            fragmentTransaction.hide(lyricsFrag).commit();
+        }
         return name;
+
     }
 
     private String changeAlbumArt(int index)
     {
-        int albumId = musicHash.get(mMusicList[index]).getAlbumName();
-        String albumPath = albumHash.get(albumId);
-        ImageView img = (ImageView)findViewById(R.id.img_albumart);
-       // Log.d("CHANGEALBUMART", albumPath);
-        if (albumPath!= null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(albumPath);
-            //bitmap=Bitmap.createScaledBitmap(bitmap, 500,500, true);
-            img.setImageBitmap(bitmap);
-        }
-        else
-        {
-            img.setImageDrawable(getResources().getDrawable(R.drawable.music));
+        String albumPath = "";
+        if (mMusicList != null) {
+            int albumId = musicHash.get(mMusicList[index]).getAlbumName();
+            albumPath = albumHash.get(albumId);
+            ImageView img = (ImageView) findViewById(R.id.img_albumart);
+            // Log.d("CHANGEALBUMART", albumPath);
+            if (albumPath != null) {
+                Bitmap bitmap = BitmapFactory.decodeFile(albumPath);
+                //bitmap=Bitmap.createScaledBitmap(bitmap, 500,500, true);
+                img.setImageBitmap(bitmap);
+            } else {
+                img.setImageDrawable(getResources().getDrawable(R.drawable.music));
+            }
         }
         return albumPath;
     }
