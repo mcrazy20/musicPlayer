@@ -98,7 +98,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Setting up the fragments
+        //Setting up the fragments onCreate
         frag = new musicLoaderFragment();
         profileFrag = new ProfileDisplayFragment();
 
@@ -136,7 +136,7 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         Button lyricsButton = (Button) findViewById(R.id.btn_lyrics);
 
 
-        //This creates our lyrics view
+        //This creates our lyrics view and launches a Async Request to fetch the lyrics
         lyricsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -220,10 +220,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
             tv.setText(songName);
         }
         ImageView img = (ImageView)findViewById(R.id.img_albumart);
-        // Log.d("CHANGEALBUMART", albumPath);
         if (albumPath!= null) {
             Bitmap bitmap = BitmapFactory.decodeFile(albumPath);
-            //bitmap=Bitmap.createScaledBitmap(bitmap, 500,500, true);
             img.setImageBitmap(bitmap);
         }
         else
@@ -364,6 +362,8 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
         FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_musicloader);
         fl.setVisibility(FrameLayout.GONE);
     }
+
+    //This is called whenver we need to pop out Profile fragment from current activity
     public void hideProfileFrag(){
         getFragmentManager().popBackStack();
         FrameLayout fl = (FrameLayout) findViewById(R.id.fragment_profiledisplay);
@@ -771,11 +771,13 @@ public class MainActivity extends ActionBarActivity implements SeekBar.OnSeekBar
 
     }
 
+    // This is used to hide the facebook fragment and not kill it
     public void hideFBFrag(){
         Log.d("MainActivity", "Hidiiiing");
         getSupportFragmentManager().beginTransaction().hide(mainFragment).commit();
     }
 
+    // This is used to show a previously hidden facebook fragment
     public void showFBFrag(){
         Log.d("MainActivity","Showing");
         getSupportFragmentManager().beginTransaction().show(mainFragment).commit();

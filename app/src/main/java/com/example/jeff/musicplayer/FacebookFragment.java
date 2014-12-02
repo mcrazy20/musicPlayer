@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -21,7 +20,6 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
-import com.facebook.widget.ProfilePictureView;
 
 import java.util.Arrays;
 
@@ -29,15 +27,14 @@ import java.util.Arrays;
  * Created by Rohit on 11/13/14.
  */
 
-//ROHIT COMMENT THIS FILE
+//This fragment is used as Home page and also includes the facebook authentication code
 public class FacebookFragment extends Fragment {
 
     private static final String TAG = "MainFragment";
 
+    //uiHelper is used by facebook to maintain session information
     private UiLifecycleHelper uiHelper;
-    //private TextView userInfoTextView;
     private static GraphUser currUser;
-    //private ProfilePictureView profilePictureView;
 
     private Session.StatusCallback callback = new Session.StatusCallback() {
         @Override
@@ -54,6 +51,7 @@ public class FacebookFragment extends Fragment {
         uiHelper.onCreate(savedInstanceState);
     }
 
+    //This inflates our view with a layout onCreate
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,12 +78,10 @@ public class FacebookFragment extends Fragment {
         return view;
     }
 
-
+    //This method is automatically called by facebook SDK whenever user Session state changes
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in... yeah");
-
-            //userInfoTextView.setVisibility(View.VISIBLE);
 
             Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
 
@@ -94,18 +90,6 @@ public class FacebookFragment extends Fragment {
                     if (user != null) {
                         currUser = user;
                         Log.d("User Set to", currUser.toString());
-                        // Display the parsed user info
-
-                        //profilePictureView.setVisibility(ProfilePictureView.VISIBLE);
-                        //profilePictureView.setProfileId(user.getId());
-
-//                        s[2] = "facebook_id";
-//                        s[3] =  currUser.getId();
-//                        s[4] = "name";
-//                        s[5] = currUser.getName();
-//                        s[6] = "email";
-//                        s[7] = (String) currUser.getProperty("email");
-
                         ((MainActivity) getActivity()).getSessionFromServer(currUser.getId(),currUser.getName(),(String) currUser.getProperty("email"));
 
                     }
@@ -120,8 +104,6 @@ public class FacebookFragment extends Fragment {
             Log.i(TAG, "Logged out...");
             currUser = null;
             ((MainActivity) getActivity()).clearFBId();
-            //userInfoTextView.setVisibility(View.INVISIBLE);
-            //profilePictureView.setVisibility(ProfilePictureView.INVISIBLE);
             ((MainActivity)getActivity()).showFBFrag();
         }
     }

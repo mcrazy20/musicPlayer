@@ -28,6 +28,8 @@ import java.util.Stack;
 
 /**
  * Created by Rohit on 10/19/14.
+ * This Fragment is the fragment used to display the list of songs present in the device
+ * and user can interact with the list and play any song
  */
 public class musicLoaderFragment extends Fragment {
 
