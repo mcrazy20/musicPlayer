@@ -37,6 +37,8 @@ public class MyTest extends ActivityInstrumentationTestCase2<MainActivity> {
     solo.clickInList(1);
     //show lyrics
     solo.clickOnView(solo.getView(R.id.btn_lyrics));
+    //go to next song
+    solo.clickOnView(solo.getView(R.id.btn_next));
     //hide lyrics
     solo.clickOnView(solo.getView(R.id.btn_lyrics));
     //go to next song
@@ -50,6 +52,14 @@ public class MyTest extends ActivityInstrumentationTestCase2<MainActivity> {
     //go to profile page
     solo.clickOnView(solo.getView(R.id.profiledisplay));
     //go back to main menu
-    solo.goBack();
+    solo.clickOnView(solo.getView(R.id.backToMain));
+    //pause music
+    solo.clickOnView(solo.getView(R.id.btn_play));
+    //play music
+    solo.clickOnView(solo.getView(R.id.btn_play));
+    //pause music
+    solo.clickOnView(solo.getView(R.id.btn_play));
+    //play music
+    solo.clickOnView(solo.getView(R.id.btn_play));
   }
 }
