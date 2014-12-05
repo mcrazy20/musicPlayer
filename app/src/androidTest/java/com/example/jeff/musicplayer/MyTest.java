@@ -32,9 +32,10 @@ public class MyTest extends ActivityInstrumentationTestCase2<MainActivity> {
     solo.assertCurrentActivity("wrong activity", MainActivity.class);
     //show music list
     solo.clickOnView(solo.getView(R.id.main_button));
-    //test for music list fragment
-    assertTrue(solo.waitForText("HOME"));
-    solo.clickInList(1);
+
+    solo.clickInList(4);
+    //click home button from music loader
+    solo.clickOnView(solo.getView(R.id.btn_song_list_back));
     //show lyrics
     solo.clickOnView(solo.getView(R.id.btn_lyrics));
     //go to next song
